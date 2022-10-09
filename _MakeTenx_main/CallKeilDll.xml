@@ -1,0 +1,9 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<CallKeilDll>
+	<ProjectFileName>main.uvproj</ProjectFileName>
+	<ChipName>TM52FN8276</ChipName>
+	<DllName>SampTarg</DllName>
+	<OutFileName>main</OutFileName>
+	<OutFolderName>.\obj\</OutFolderName>
+	<DllFolderPath>D:\Keil_v5\</DllFolderPath>
+</CallKeilDll>

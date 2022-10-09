@@ -1,0 +1,57 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+<Setting>
+	<Message>
+		<SelectKeilFolder>
+			<Language Enable="0" Value="0">
+				<Item TypeName="TranditionCh" Index="0" Value="Can't find plug-in dll,please select keil-c folder!">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="SimpleCh" Index="1" Value="编译生成烧录档失败!!!&#xa;无法检测插件位置，请重新输入keil安装路径。&#xa;或按取消后手动进行工程设定匹配">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="English" Index="2" Value="Can't find plug-in dll,please select keil-c folder!">
+					<FontSize>10</FontSize>
+				</Item>
+			</Language>
+		</SelectKeilFolder>
+		<NotFindDll>
+			<Language Enable="0" Value="0">
+				<Item TypeName="TranditionCh" Index="0" Value="Make burn file warning:&#xa;Can't find plug-in dll,&#xa;please go setting dialog to update your settings!">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="SimpleCh" Index="1" Value="无法检测插件位置，&#xa;请至&#xa;Project &#xa;-> Options for Target ‘Target 1’… &#xa;-> Utilities页面 &#xa;-> Settings，&#xa;並確認已勾選编译生成烧录档。&#xa;以便更新项目文檔，而正确执行编译生成烧录档。">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="English" Index="2" Value="Make burn file warning:&#xa;Can't find plug-in dll,&#xa;please go setting dialog to update your settings!">
+					<FontSize>10</FontSize>
+				</Item>
+			</Language>
+		</NotFindDll>
+		<DllTooOld>
+			<Language Enable="0" Value="0">
+				<Item TypeName="TranditionCh" Index="0" Value="%s plug-in dll is too old,please update!!!">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="SimpleCh" Index="1" Value="无法支持%s安装之插件生成烧录档，请更新插件版本!!!">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="English" Index="2" Value="%s plug-in dll is too old,please update!!!">
+					<FontSize>10</FontSize>
+				</Item>
+			</Language>
+		</DllTooOld>
+		<CancelToShow>
+			<Language Enable="0" Value="0">
+				<Item TypeName="TranditionCh" Index="0" Value="Cancel">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="SimpleCh" Index="1" Value="按取消进入演示">
+					<FontSize>10</FontSize>
+				</Item>
+				<Item TypeName="English" Index="2" Value="Cancel">
+					<FontSize>10</FontSize>
+				</Item>
+			</Language>
+		</CancelToShow>
+	</Message>
+</Setting>
