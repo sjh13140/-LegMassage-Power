@@ -16,8 +16,8 @@ typedef struct AIP1642_TAG{
   u8 n;   
   u8 buf[4];           
 }AIP1642_T;
-//D1 D2(16) =0X03  D8D6(17)=0XA0  D5D7(18)=0X50 D3D4(19)=0X0C   D1(20)=0X01   D2(21)=0X02 D3(22)=0X04  L(23)  °µ24
-u8  code table[]={0x00,0x01,0x02,0x04,0x08,0x10};	 //D1 D2    D8 D6    D5D7   D3D4
+
+u8  code table[]={0x00,0x01,0x02,0x04,0x08,0x10,0x03};	
 AIP1642_T t_aip1642;
 
 void ct1642_gpio_init(void)

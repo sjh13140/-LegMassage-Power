@@ -44,12 +44,13 @@ typedef struct KEY_TAG{
 }KEY_TAG_T;
 
 typedef enum KEY_ENUM{
-   TK1LONG=1,
-	 TK1SHORT,
-	  TK2SHORT,
-	   TK3SHORT,
-	    TK4SHORT,
-	    KEYSHORT
+	
+	KEY1SHORT=1,
+	KEY2SHORT,
+	KEY3LONG,
+	KEY3SHORT,
+	KEY4SHORT,
+	KEY5SHORT
 }KEY_E;
 typedef struct MODE_TAG{         
   u8 num;                        
@@ -70,7 +71,8 @@ typedef enum AIP1642_ENUM{
 		UI_L2,
 		UI_L3,
 		UI_L4,
-		UI_L5
+		UI_L5,
+		UI_L1L2
 }AIP1642_E;
 typedef struct GASAG_TAG{         
      u8 gotime;
@@ -105,11 +107,11 @@ typedef enum TIME_ENUM{
 	  ERR_DATA=0XEF
 
 }TIME_E;
-KEY_TAG_T xdata tk1;
-KEY_TAG_T xdata tk2;
-KEY_TAG_T xdata tk3;
-KEY_TAG_T xdata tk4;
-KEY_TAG_T xdata key;
+KEY_TAG_T xdata key1;
+KEY_TAG_T xdata key2;
+KEY_TAG_T xdata key3;
+KEY_TAG_T xdata key4;
+KEY_TAG_T xdata key5;
 MODE_T xdata t_mode;
 GASAG_T xdata t_upgas;
 GASAG_T xdata t_downgas;
@@ -129,12 +131,12 @@ u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
 u8 xdata runstate=0;  // 0:停止  1:运行 2:暂停 3:充电
 u8 xdata step=0xff; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
-u8 xdata temppara=0; //加热片参数
-u8 xdata shockpara=0; //震动马达参数
-u32 xdata shocktime;//震动时间的首次计算时间戳
-u8 xdata lockflag=0; //锁屏标志
-u32 xdata beeptime;
-u8 xdata beepflag;
+u8 xdata kneehot;
+u8 xdata feethot=0; //加热片参数
+u8 xdata kneelast;
+u8 xdata feetlast=0; //加热片参数
+u8 xdata hotflag=6;
+
 u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
 u8 xdata SHOW3=UI_NONE;
@@ -143,6 +145,15 @@ u8 xdata dir;
 u8 xdata cnt;
 u8 xdata twogasbagrun;
 u8 xdata databuf[10];
+u8 xdata strengthflag=1;
+u8 xdata strengthpara=1;
+void ui_show(u8 para1,u8 para2,u8 para3,u8 para4)
+{
+	SHOW1=para1;
+	SHOW2=para2;
+	SHOW3=para3;
+	SHOW4=para4;
+}
 void pushlongdata(u8 a,u8 *buf,u8 len) 
 {
       u8 i=0;
@@ -203,28 +214,28 @@ void pushlongdata(u8 a,u8 *buf,u8 len)
 //按键扫描
 u8 key_scan(void)
 {
-   if(tk1.state==0){
+   if(key1.state==0){
 		if(KEY1==0){
-			tk1.time = getsystimes();
-			tk1.state=1;
-			tk1.over=0;
+			key1.time = getsystimes();
+			key1.state=1;
+			key1.over=0;
 		}
 	}
 	else {
-		if(tk1.over==0){
-			if(getsystimes()-tk1.time>=KEYTIME){
-				tk1.over=1;
-				return TK1LONG;
+		if(key1.over==0){
+			if(getsystimes()-key1.time>=KEYTIME){
+				key1.over=1;
+				return 0;
 				
 			}
 			else if(KEY1==1)
 				{
-					if(getsystimes()-tk1.time>=15){
-							tk1.over=1;
-							return TK1SHORT;
+					if(getsystimes()-key1.time>=15){
+							key1.over=1;
+							return KEY1SHORT;
 						}
 					else {
-							tk1.over=1;
+							key1.over=1;
 							return 0;
 
 					}
@@ -232,34 +243,34 @@ u8 key_scan(void)
 		}
 		else 
 			{
-                    if(KEY1==1) tk1.state=0;
+                    if(KEY1==1) key1.state=0;
 
 		}
 
 	}
 
-   if(tk2.state==0){
+   if(key2.state==0){
 		if(KEY2==0){
-			tk2.time = getsystimes();
-			tk2.state=1;
-			tk2.over=0;
+			key2.time = getsystimes();
+			key2.state=1;
+			key2.over=0;
 		}
 	}
 	else {
-		if(tk2.over==0){
-			if(getsystimes()-tk2.time>=KEYTIME){
-				tk2.over=1;
+		if(key2.over==0){
+			if(getsystimes()-key2.time>=KEYTIME){
+				key2.over=1;
 				return 0;
 				
 			}
 			else if(KEY2==1)
 				{
-					if(getsystimes()-tk2.time>=15){
-							tk2.over=1;
-							return TK2SHORT;
+					if(getsystimes()-key2.time>=15){
+							key2.over=1;
+							return KEY2SHORT;
 						}
 					else {
-							tk2.over=1;
+							key2.over=1;
 							return 0;
 
 					}
@@ -267,35 +278,35 @@ u8 key_scan(void)
 		}
 		else 
 			{
-                    if(KEY2==1) tk2.state=0;
+                    if(KEY2==1) key2.state=0;
 
 		}
 
 	}
 
-   if(tk3.state==0){
+   if(key3.state==0){
 		if(KEY3==0){
-			tk3.time = getsystimes();
-			tk3.state=1;
-			tk3.over=0;
+			key3.time = getsystimes();
+			key3.state=1;
+			key3.over=0;
 		}
 	}
 	else {
-		if(tk3.over==0){
-			if(getsystimes()-tk3.time>=KEYTIME){
-				tk3.over=1;
-				return 0;
+		if(key3.over==0){
+			if(getsystimes()-key3.time>=KEYTIME){
+				key3.over=1;
+				return KEY3LONG;
 				
 			}
 			else if(KEY3==1)
 				{
-					if(getsystimes()-tk3.time>=15){
-							tk3.over=1;
+					if(getsystimes()-key3.time>=15){
+							key3.over=1;
 					
-							return TK3SHORT;
+							return KEY3SHORT;
 						}
 					else {
-							tk3.over=1;
+							key3.over=1;
 							return 0;
 
 					}
@@ -303,35 +314,35 @@ u8 key_scan(void)
 		}
 		else 
 			{
-                    if(KEY3==1) tk3.state=0;
+                    if(KEY3==1) key3.state=0;
 
 		}
 
 	}
 
-   if(tk4.state==0){
+   if(key4.state==0){
 		if(KEY4==0){
-			tk4.time = getsystimes();
-			tk4.state=1;
-			tk4.over=0;
+			key4.time = getsystimes();
+			key4.state=1;
+			key4.over=0;
 		}
 	}
 	else {
-		if(tk4.over==0){
-			if(getsystimes()-tk4.time>=KEYTIME){
-				tk4.over=1;
+		if(key4.over==0){
+			if(getsystimes()-key4.time>=KEYTIME){
+				key4.over=1;
 				return 0;
 				
 			}
 			else if(KEY4==1)
 				{
-					if(getsystimes()-tk4.time>=15){
-							tk4.over=1;
+					if(getsystimes()-key4.time>=15){
+							key4.over=1;
 			
-							return TK4SHORT;
+							return KEY4SHORT;
 						}
 					else {
-							tk4.over=1;
+							key4.over=1;
 							return 0;
 
 					}
@@ -339,35 +350,35 @@ u8 key_scan(void)
 		}
 		else 
 			{
-                    if(KEY4==1) tk4.state=0;
+                    if(KEY4==1) key4.state=0;
 
 		}
 
 	}
 
-   if(key.state==0){
+   if(key5.state==0){
 		if(KEY5==0){
-			key.time = getsystimes();
-			key.state=1;
-			key.over=0;
+			key5.time = getsystimes();
+			key5.state=1;
+			key5.over=0;
 		}
 	}
 	else {
-		if(key.over==0){
-			if(getsystimes()-key.time>=KEYTIME){
-				key.over=1;
+		if(key5.over==0){
+			if(getsystimes()-key5.time>=KEYTIME){
+				key5.over=1;
 				return 0;
 				
 			}
 			else if(KEY5==1)
 				{
-					if(getsystimes()-key.time>=15){
-							key.over=1;
+					if(getsystimes()-key5.time>=15){
+							key5.over=1;
 					
-							return KEYSHORT;
+							return KEY5SHORT;
 						}
 					else {
-							key.over=1;
+							key5.over=1;
 							return 0;
 
 					}
@@ -375,7 +386,7 @@ u8 key_scan(void)
 		}
 		else 
 			{
-                    if(KEY5==1) key.state=0;
+                    if(KEY5==1) key5.state=0;
 
 		}
 
@@ -391,8 +402,55 @@ void key_process(void)
   u8 i;
 	key = key_scan();
 	if(key==0)return;
-	
+	if(key==KEY1SHORT){  //加热
+               if(hotflag==0) {
+			kneehot=kneelast;
+			feethot=feetlast;
+			hotflag=5;
+	        }
+	        else {
+			hotflag=0;
+			kneelast = kneehot;
+			feetlast = feethot;
+			kneehot=0;
+			feethot=0;
+		}
+	}
+	else if(key==KEY2SHORT){ //强度
+		strengthflag++;
+		if(strengthflag>5)strengthflag=1;
+	}
+	else if(key==KEY3LONG){  //开关
+					if(runstate==0){
+						runstate=1;
+						mode = modelove;
+						
+					}
+					else if(runstate==1){
+						runstate=0;
+						hotflag=0;
+						strengthflag=0;
+						mode=0;
+					}
+	}
+	else if(key==KEY3SHORT){ //开关
 
+	}
+	else if(key==KEY4SHORT){ //局部
+		if(mode<=5)mode=6;
+		else {
+                     mode++;
+			if(mode>8)mode=6;
+		}
+	}
+	else if(key==KEY5SHORT){  //自动
+		mode++;
+		if(mode>5)mode=1;
+	}
+	if(mode<=5)
+	ui_show(mode, 0, strengthflag, runstate+hotflag);
+	else 
+	ui_show(0,mode, strengthflag, runstate+hotflag);	
 }
 
 
@@ -886,15 +944,15 @@ void main(void)
 		
 	}
 	EA = 1;
-SHOW1=5;
-SHOW2=2;
-SHOW3=1;
-SHOW4=2;
+	SHOW1=5;
+	SHOW2=2;
+	SHOW3=1;
+	SHOW4=2;
 	wdg_init();
   while(1)
 	{
 		//按键设置处理
-//		key_process();
+		key_process();
 //		//蓝牙接收处理
 		//ble_process();
 //		//充电检测与电量检测
