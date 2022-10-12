@@ -33,53 +33,65 @@ void ct1642_gpio_init(void)
 	t_aip1642.pos=1;
 	t_aip1642.n=0;
 }
-/*
-Pos位：1、2、4、8对应C1--C4
-Val段：对应8个段Q2--Q9
-*/
-void CT1642_Write(unsigned char Pos, unsigned char Val)
+void ct1642_send_data(unsigned char ct_dis_data, unsigned char ct_com)
 {
-    unsigned char i,Posn;
-    // 1、移18位：对应C1--C4、6位空、Q2--Q9
-    Posn=~Pos;
-    for(i=0; i<4; i++)//C1--C4
-    {
-        DAT=Posn & 0x01;
-        Posn >>= 1;
-        CLK=0;    CLK=1;
-    }
-    for(i=0; i<6; i++)//6位空
-    {
-        DAT=1;
-        CLK=0;    CLK=1;
-    }
-    for(i=0; i<8; i++)//Q2--Q9
-    {
-        DAT=Val & 0x01;
-        Val >>= 1;
-        CLK=0;    CLK=1;
-    }
-    // 2、锁存
-    CLK=1;    DAT=0;    DAT=1;
-    // 3、输出
-    CLK=0;    DAT=0;    DAT=1;
+		unsigned char ct_addr;                   //存储数码管位置
+		unsigned char i;
+		switch(ct_com){
+			case 0: {ct_addr=0xfe; ;break;}//显示C1位数据 数码管为共阴极，将要点亮的COM置0以显示该COM
+			case 1: {ct_addr=0xfd; break;} //显示C2位数据  
+			case 2: {ct_addr=0xfb; break;} //显示C3位数据  
+			case 3: {ct_addr=0xf7; break;} //显示C4位数据     
+			case 4: {ct_addr=0xff; break;}  //扫描键盘,关闭COM1  
+			default:{ct_addr=0xff; ct_dis_data=0x00;break;}   
+		}
+		for(i=0;i<8;i++) {                  //发送8位地址
+			CLK=0 ;
+			if( (ct_addr>>i)&0x01){
+				DAT=1;
+			}
+			else{
+				DAT=0;
+			}
+			CLK=1;//上升沿输出一位
+		}
+		DAT=0;      //发送两个空位，补足要发送的18位
+		CLK=0 ;
+		_nop_();//此处根据单片机的指令周期而定
+		CLK=1;
+		DAT=0;
+		CLK=0 ;
+		_nop_();
+		CLK=1;
+		for(i=0;i<8;i++){  //发送8位数据
+			CLK=0 ;
+			if( (ct_dis_data>>i)&0x01)
+			{
+				DAT=1;
+			}
+			else
+			{
+				DAT=0;
+			}
+			CLK=1;
+		}
+		CLK=1; //输出数据
+		DAT=0;
+		_nop_();
+		DAT=1;
+		CLK=0 ;
+		DAT=0;
+		_nop_();
+		DAT=1;
+		CLK=0;
 }
-
 void aip1642_process(void)
 {
-		CT1642_Write(0, 0xff);
-		if(t_aip1642.pos==1){t_aip1642.n=t_aip1642.buf[0];}
-		else if(t_aip1642.pos==2){t_aip1642.n=t_aip1642.buf[1];}
-		else if(t_aip1642.pos==4){t_aip1642.n=t_aip1642.buf[2];}
-		else if(t_aip1642.pos==8){t_aip1642.n=t_aip1642.buf[3];}
-		CT1642_Write(t_aip1642.pos, table[t_aip1642.n]);
-		t_aip1642.pos=t_aip1642.pos<<1;
-		if(t_aip1642.pos>8)t_aip1642.pos=1;
-
-		
-
-		
+		 ct1642_send_data( table[t_aip1642.buf[t_aip1642.pos]],t_aip1642.pos);
+		t_aip1642.pos++;
+		if(t_aip1642.pos>3)t_aip1642.pos=0;
 }
+
 
 void show_aip1642(u8 para1,u8 para2,u8 para3,u8 para4)
 {

@@ -34,9 +34,6 @@
 #define twogasbag_gogas_lowtime           30//26
 #define twogasbag_outgas_lowtime         2
 
-#define bat_lowpower 800   //   3.7v
-#define bat_nonepower 750  //  3.5v
-
 typedef struct KEY_TAG{
   u32 time;                        
   u8 state;   
@@ -107,6 +104,23 @@ typedef enum TIME_ENUM{
 	  ERR_DATA=0XEF
 
 }TIME_E;
+
+typedef enum BODY_ENUM{
+	
+	FOOT,
+	ANKLE,
+	SLEG,
+	BLEG,
+	FOOT_ANKLE,
+	FOOT_SLEG,
+	FOOT_BLEG,
+	ANKLE_SLEG,
+	ANKLE_BLEG,
+	SLEG_BLEG,
+	FOOT_ANKLE_SLEG,
+	FOOT_ANKLE_SLEG_BLEG,
+	ALL_OUTGAS
+}BODY_E;
 KEY_TAG_T xdata key1;
 KEY_TAG_T xdata key2;
 KEY_TAG_T xdata key3;
@@ -121,13 +135,13 @@ u8 xdata  mode=0;   //按摩模式
 u8 xdata modelove=0;
 u8 xdata eepromflag=0;
 u8 xdata eeprombuf[2];
-u8 xdata chrgstate=0;  //0表示拔掉 1表示充电   2表示充满
-u8 xdata powerstate=0;  //电量状态  0:表示电量不足 1:表示电量充足2:表示电量不足
+//u8 xdata chrgstate=0;  //0表示拔掉 1表示充电   2表示充满
+//u8 xdata powerstate=0;  //电量状态  0:表示电量不足 1:表示电量充足2:表示电量不足
 u16 xdata temp=0;  //串口接收存放校验和
 u8 xdata alarmtime=15;  //定时时间
 u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
-u8 xdata pushbuf[20]; //发送数组
-u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
+//u8 xdata pushbuf[20]; //发送数组
+//u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
 u8 xdata runstate=0;  // 0:停止  1:运行 2:暂停 3:充电
 u8 xdata step=0xff; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
@@ -135,7 +149,7 @@ u8 xdata kneehot;
 u8 xdata feethot=0; //加热片参数
 u8 xdata kneelast;
 u8 xdata feetlast=0; //加热片参数
-u8 xdata hotflag=6;
+u8 xdata hotflag=0;
 
 u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
@@ -144,7 +158,7 @@ u8 xdata SHOW4=UI_NONE;
 u8 xdata dir;
 u8 xdata cnt;
 u8 xdata twogasbagrun;
-u8 xdata databuf[10];
+//u8 xdata databuf[10];
 u8 xdata strengthflag=1;
 u8 xdata strengthpara=1;
 void ui_show(u8 para1,u8 para2,u8 para3,u8 para4)
@@ -176,6 +190,68 @@ void pushlongdata(u8 a,u8 *buf,u8 len)
 		}	  
 
 
+}
+void valve_process(u8 para1,u8 para2,u8 para3,u8 para4)
+{
+		VALVE1=para1;
+		VALVE2=para2;
+		VALVE3=para3;
+		VALVE4=para4;
+
+}
+void heat_process()
+{
+
+
+}
+void strength_process()
+{
+
+
+}
+void mode_process()
+{
+	switch(mode){
+	case 1:
+		t_mode.buf[0]=FOOT;
+		t_mode.buf[1]=ANKLE;
+		t_mode.buf[2]=SLEG;
+		t_mode.buf[3]=BLEG;
+		break;
+	case 2:
+		t_mode.buf[0]=FOOT;
+		t_mode.buf[1]=FOOT_ANKLE;
+		t_mode.buf[2]=FOOT_ANKLE_SLEG;
+		t_mode.buf[3]=FOOT_ANKLE_SLEG_BLEG;
+		break;
+	case 3:
+		t_mode.buf[0]=FOOT_ANKLE;
+		t_mode.buf[1]=SLEG_BLEG;
+		t_mode.buf[2]=FOOT_SLEG;
+		t_mode.buf[3]=FOOT_BLEG;
+		t_mode.buf[4]=ANKLE_SLEG;
+		t_mode.buf[5]=ANKLE_BLEG;
+		break;
+	case 4:
+		t_mode.buf[0]=FOOT_ANKLE_SLEG_BLEG;
+		t_mode.buf[1]=ALL_OUTGAS;
+		break;
+	case 5:
+
+		break;
+	case 6:
+		t_mode.buf[0]=FOOT;
+		t_mode.buf[1]=ALL_OUTGAS;
+		break;
+	case 7:
+		t_mode.buf[0]=SLEG;
+		t_mode.buf[1]=ALL_OUTGAS;
+		break;
+	case 8:
+		t_mode.buf[0]=BLEG;
+		t_mode.buf[1]=ALL_OUTGAS;
+		break;
+	}
 }
 //void pushdata(u8 a,u16 b)  	//	功能字   数据
 //{
@@ -402,23 +478,18 @@ void key_process(void)
   u8 i;
 	key = key_scan();
 	if(key==0)return;
-	if(key==KEY1SHORT){  //加热
-               if(hotflag==0) {
-			kneehot=kneelast;
-			feethot=feetlast;
-			hotflag=5;
-	        }
-	        else {
-			hotflag=0;
-			kneelast = kneehot;
-			feetlast = feethot;
-			kneehot=0;
-			feethot=0;
-		}
+	if(key==KEY1SHORT){  //自动
+		mode++;
+		if(mode>5)mode=1;
+
 	}
-	else if(key==KEY2SHORT){ //强度
-		strengthflag++;
-		if(strengthflag>5)strengthflag=1;
+	else if(key==KEY2SHORT){//局部
+			if(mode<=5)mode=6;
+		else {
+                     mode++;
+			if(mode>8)mode=6;
+		}
+	
 	}
 	else if(key==KEY3LONG){  //开关
 					if(runstate==0){
@@ -436,21 +507,26 @@ void key_process(void)
 	else if(key==KEY3SHORT){ //开关
 
 	}
-	else if(key==KEY4SHORT){ //局部
-		if(mode<=5)mode=6;
-		else {
-                     mode++;
-			if(mode>8)mode=6;
+	else if(key==KEY4SHORT){   //强度 
+		strengthflag++;
+		if(strengthflag>4)strengthflag=1;
+	}
+	else if(key==KEY5SHORT){  //加热 
+               if(hotflag==0) {
+			kneehot=kneelast;   //膝盖加热
+			feethot=feetlast;  //足底加热
+			hotflag=5;     //加热状态
+	        }
+	        else {
+			hotflag=0;
+			kneelast = kneehot;
+			feetlast = feethot;
+			kneehot=0;
+			feethot=0;
 		}
 	}
-	else if(key==KEY5SHORT){  //自动
-		mode++;
-		if(mode>5)mode=1;
-	}
-	if(mode<=5)
-	ui_show(mode, 0, strengthflag, runstate+hotflag);
-	else 
-	ui_show(0,mode, strengthflag, runstate+hotflag);	
+	if(runstate==0)ui_show(0,0, 0, 0);
+	else if(runstate==1)ui_show((mode<6?mode:0),(mode>5?mode-5:0), strengthflag, runstate+hotflag);
 }
 
 
@@ -826,19 +902,11 @@ void control_process(void)
 {
 	if(runstate==0){   //关机
 		PUMP=0;
-		VALVE1=0;
-		VALVE2=0;
-		HEATSLICE(0);
-	
+		valve_process(0,0,0,0); 
 		step=0xff;
-		 SHOW1=UI_NONE;
-		 SHOW2=UI_NONE;
-		 SHOW3=UI_NONE;
-		 SHOW4=UI_NONE;		
+		ui_show(0,0, 0, 0);
 	}
 	else if(runstate==1){  //开机
-	
-		//HEATSLICE(temppara);
 
 		if(get_stepsec()==t_mode.time){
 			clear_stepsec();
@@ -848,39 +916,103 @@ void control_process(void)
 		step = t_mode.buf[t_mode.p];
            switch(step)
            	{
-              case 0:           //上气囊
+              case FOOT:           //脚底
 			t_mode.time = t_upgas.gotime;
 			PUMP=1;
-			VALVE1=1;
-			VALVE2=0;
+			valve_process(1,0,0,0); // FOOT ANKLE SLEG BLEG
 			twogasbagrun=0;
 			break;
-		case 1:         //下气囊
+		case ANKLE:         //脚踝
 			t_mode.time = t_downgas.gotime;
 			PUMP=1;
-			VALVE1=0;
-			VALVE2=1;
+			valve_process(0,1,0,0); 
 			twogasbagrun=0;
 			break;
-              case 2:   //双气囊打气
-              	if(twogasbagrun==1){
-				if(mode==2)t_mode.time=17;
-				else if(mode==3)t_mode.time=15;
-			}
-			else {
-				t_mode.time = t_twogas.gotime;
-			} 
+              case SLEG:           //小腿
+			t_mode.time = t_upgas.gotime;
 			PUMP=1;
-			VALVE1=1;
-			VALVE2=1;
+			valve_process(0,0,1,0); 
+			twogasbagrun=0;
 			break;
-		case 3:   //双气囊泄气
-		       t_mode.time = t_twogas.outtime;
-			PUMP=0;
-			VALVE1=0;
-			VALVE2=0;
-			twogasbagrun=1;
+		case BLEG:         //大腿
+			t_mode.time = t_downgas.gotime;
+			PUMP=1;
+			valve_process(0,0,0,1); 
+			twogasbagrun=0;
 			break;
+              case FOOT_ANKLE:           //脚底+ 脚踝
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(1,1,0,0); 
+			twogasbagrun=0;
+			break;
+              case FOOT_SLEG:           //脚底+ 小腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(1,0,1,0); 
+			twogasbagrun=0;
+			break;
+		 case FOOT_BLEG:           //脚底+ 大腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(1,0,0,1); 
+			twogasbagrun=0;
+			break;
+              case ANKLE_SLEG:           //脚踝+ 小腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(0,1,1,0); 
+			twogasbagrun=0;
+			break;
+		 case ANKLE_BLEG:           //脚踝+ 大腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(0,1,0,1); 
+			twogasbagrun=0;
+			break;
+		 case SLEG_BLEG:           //小腿+ 大腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(0,0,1,1); 
+			twogasbagrun=0;
+			break;
+		case FOOT_ANKLE_SLEG:         //脚底+ 脚踝+小腿
+			t_mode.time = t_downgas.gotime;
+			PUMP=1;
+			valve_process(1,1,1,0); 
+			twogasbagrun=0;
+			break;
+              case FOOT_ANKLE_SLEG_BLEG:            //脚底+ 脚踝+小腿+大腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(1,1,1,1); 
+			twogasbagrun=0;
+			break;	
+              case ALL_OUTGAS:            //脚底+ 脚踝+小腿+大腿
+			t_mode.time = t_upgas.gotime;
+			PUMP=1;
+			valve_process(0,0,0,0); 
+			twogasbagrun=0;
+			break;			
+//              case 2:   //双气囊打气
+//              	if(twogasbagrun==1){
+//				if(mode==2)t_mode.time=17;
+//				else if(mode==3)t_mode.time=15;
+//			}
+//			else {
+//				t_mode.time = t_twogas.gotime;
+//			} 
+//			PUMP=1;
+//			VALVE1=1;
+//			VALVE2=1;
+//			break;
+//		case 3:   //双气囊泄气
+//		       t_mode.time = t_twogas.outtime;
+//			PUMP=0;
+//			VALVE1=0;
+//			VALVE2=0;
+//			twogasbagrun=1;
+//			break;
 		}		
 	}
 	else if(runstate==2) { //暂停
@@ -898,7 +1030,6 @@ void alarmtime_process(void)
       	{
 		if(get_alarmsec()-firsttime>=(alarmtime*60)){
 			runstate=0;
-			//pushdata(0x01,(u16)mode);
 			t_data.len=0;
 			t_data.buf[t_data.len++]=runstate;
 			for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -944,10 +1075,16 @@ void main(void)
 		
 	}
 	EA = 1;
-	SHOW1=5;
-	SHOW2=2;
-	SHOW3=1;
-	SHOW4=2;
+//	SHOW1=5;
+//	SHOW2=2;
+//	SHOW3=1;
+//	SHOW4=2;
+PUMP=0;
+VALVE1=0;
+VALVE2=0;
+VALVE3=0;
+VALVE4=0;
+ui_show(0,0, 0, 0);
 	wdg_init();
   while(1)
 	{
@@ -955,8 +1092,7 @@ void main(void)
 		key_process();
 //		//蓝牙接收处理
 		//ble_process();
-//		//充电检测与电量检测
-	//	power_process();     //打开这个会导致延时不准
+
 //		//输出控制
 //		control_process();
 //		数码管显示
