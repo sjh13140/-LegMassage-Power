@@ -24,65 +24,95 @@
 #define foot_gogas_L3 20
 #define foot_gogas_L4 25
 
+#define foot_again_gogas_L1 5
+#define foot_again_gogas_L2 10
+#define foot_again_gogas_L3 15
+#define foot_again_gogas_L4 20
+
 #define ankle_gogas_L1 10
 #define ankle_gogas_L2 15
 #define ankle_gogas_L3 20
 #define ankle_gogas_L4 25
+
+#define ankle_again_gogas_L1 5
+#define ankle_again_gogas_L2 10
+#define ankle_again_gogas_L3 15
+#define ankle_again_gogas_L4 20
 
 #define sleg_gogas_L1 10
 #define sleg_gogas_L2 15
 #define sleg_gogas_L3 20
 #define sleg_gogas_L4 25
 
+#define sleg_again_gogas_L1 5
+#define sleg_again_gogas_L2 10
+#define sleg_again_gogas_L3 15
+#define sleg_again_gogas_L4 20
+
 #define bleg_gogas_L1 10
 #define bleg_gogas_L2 15
 #define bleg_gogas_L3 20
 #define bleg_gogas_L4 25
 
+#define bleg_again_gogas_L1 5
+#define bleg_again_gogas_L2 10
+#define bleg_again_gogas_L3 15
+#define bleg_again_gogas_L4 20
+
 #define foot_ankle_gogas_L1 10
-#define foot_ankle_gogas_L2 10
-#define foot_ankle_gogas_L3 10
-#define foot_ankle_gogas_L4 10
+#define foot_ankle_gogas_L2 15
+#define foot_ankle_gogas_L3 20
+#define foot_ankle_gogas_L4 25
 
 #define foot_sleg_gogas_L1 10
-#define foot_sleg_gogas_L2 10
-#define foot_sleg_gogas_L3 10
-#define foot_sleg_gogas_L4 10
+#define foot_sleg_gogas_L2 15
+#define foot_sleg_gogas_L3 20
+#define foot_sleg_gogas_L4 25
 
 #define foot_bleg_gogas_L1 10
-#define foot_bleg_gogas_L2 10
-#define foot_bleg_gogas_L3 10
-#define foot_bleg_gogas_L4 10
+#define foot_bleg_gogas_L2 15
+#define foot_bleg_gogas_L3 20
+#define foot_bleg_gogas_L4 25
 
 #define ankle_sleg_gogas_L1 10
-#define ankle_sleg_gogas_L2 10
-#define ankle_sleg_gogas_L3 10
-#define ankle_sleg_gogas_L4 10
+#define ankle_sleg_gogas_L2 15
+#define ankle_sleg_gogas_L3 20
+#define ankle_sleg_gogas_L4 25
 
 #define ankle_bleg_gogas_L1 10
-#define ankle_bleg_gogas_L2 10
-#define ankle_bleg_gogas_L3 10
-#define ankle_bleg_gogas_L4 10
+#define ankle_bleg_gogas_L2 15
+#define ankle_bleg_gogas_L3 20
+#define ankle_bleg_gogas_L4 25
 
 #define sleg_bleg_gogas_L1 10
-#define sleg_bleg_gogas_L2 10
-#define sleg_bleg_gogas_L3 10
-#define sleg_bleg_gogas_L4 10
+#define sleg_bleg_gogas_L2 15
+#define sleg_bleg_gogas_L3 20
+#define sleg_bleg_gogas_L4 25
 
 #define foot_ankle_sleg_gogas_L1 10
-#define foot_ankle_sleg_gogas_L2 10
-#define foot_ankle_sleg_gogas_L3 10
-#define foot_ankle_sleg_gogas_L4 10
+#define foot_ankle_sleg_gogas_L2 15
+#define foot_ankle_sleg_gogas_L3 20
+#define foot_ankle_sleg_gogas_L4 25
 
 #define foot_ankle_sleg_bleg_gogas_L1 10
-#define foot_ankle_sleg_bleg_gogas_L2 10
-#define foot_ankle_sleg_bleg_gogas_L3 10
-#define foot_ankle_sleg_bleg_gogas_L4 10
+#define foot_ankle_sleg_bleg_gogas_L2 15
+#define foot_ankle_sleg_bleg_gogas_L3 20
+#define foot_ankle_sleg_bleg_gogas_L4 25
 
-#define foot_ankle_sleg_bleg_outgas_L1 10
-#define foot_ankle_sleg_bleg_outgas_L2 10
-#define foot_ankle_sleg_bleg_outgas_L3 10
-#define foot_ankle_sleg_bleg_outgas_L4 10
+#define foot_ankle_sleg_bleg_again_gogas_L1 5
+#define foot_ankle_sleg_bleg_again_gogas_L2 10
+#define foot_ankle_sleg_bleg_again_gogas_L3 15
+#define foot_ankle_sleg_bleg_again_gogas_L4 20
+
+#define foot_ankle_sleg_bleg_outgas_L1 4
+#define foot_ankle_sleg_bleg_outgas_L2 4
+#define foot_ankle_sleg_bleg_outgas_L3 4
+#define foot_ankle_sleg_bleg_outgas_L4 4
+
+
+#define tempL3 255
+#define tempL2 230
+#define tempL1 200
 u8 code gastime[13][5]={
 	{0,foot_gogas_L1, foot_gogas_L2, foot_gogas_L3, foot_gogas_L4},
 	{0,ankle_gogas_L1, ankle_gogas_L2, ankle_gogas_L3, ankle_gogas_L4},
@@ -95,7 +125,23 @@ u8 code gastime[13][5]={
 	{0,ankle_bleg_gogas_L1, ankle_bleg_gogas_L2, ankle_bleg_gogas_L3, ankle_bleg_gogas_L4},
 	{0,sleg_bleg_gogas_L1, sleg_bleg_gogas_L2, sleg_bleg_gogas_L3, sleg_bleg_gogas_L4},
 	{0,foot_ankle_sleg_gogas_L1, foot_ankle_sleg_gogas_L2, foot_ankle_sleg_gogas_L3, foot_ankle_sleg_gogas_L4},
-	{0,foot_ankle_sleg_bleg_gogas_L1, foot_ankle_sleg_bleg_gogas_L2, foot_ankle_sleg_bleg_gogas_L3, foot_ankle_sleg_bleg_gogas_L4}
+	{0,foot_ankle_sleg_bleg_gogas_L1, foot_ankle_sleg_bleg_gogas_L2, foot_ankle_sleg_bleg_gogas_L3, foot_ankle_sleg_bleg_gogas_L4},
+	{0,foot_ankle_sleg_bleg_outgas_L1, foot_ankle_sleg_bleg_outgas_L2, foot_ankle_sleg_bleg_outgas_L3, foot_ankle_sleg_bleg_outgas_L4}	
+};
+u8 code agastime[13][5]={
+	{0,foot_again_gogas_L1, foot_again_gogas_L2, foot_again_gogas_L3, foot_again_gogas_L4},
+	{0,ankle_gogas_L1, ankle_gogas_L2, ankle_gogas_L3, ankle_gogas_L4},
+	{0,sleg_again_gogas_L1, sleg_again_gogas_L2, sleg_again_gogas_L3, sleg_again_gogas_L4},
+	{0,bleg_again_gogas_L1, bleg_again_gogas_L2, bleg_again_gogas_L3,bleg_again_gogas_L4},
+	{0,foot_ankle_gogas_L1, foot_ankle_gogas_L2, foot_ankle_gogas_L3, foot_ankle_gogas_L4},
+	{0,foot_sleg_gogas_L1,  foot_sleg_gogas_L2,  foot_sleg_gogas_L3,  foot_sleg_gogas_L4},
+	{0,foot_bleg_gogas_L1, foot_bleg_gogas_L2, foot_bleg_gogas_L3,foot_bleg_gogas_L4},
+	{0,ankle_sleg_gogas_L1, ankle_sleg_gogas_L2, ankle_sleg_gogas_L3, ankle_sleg_gogas_L4},
+	{0,ankle_bleg_gogas_L1, ankle_bleg_gogas_L2, ankle_bleg_gogas_L3, ankle_bleg_gogas_L4},
+	{0,sleg_bleg_gogas_L1, sleg_bleg_gogas_L2, sleg_bleg_gogas_L3, sleg_bleg_gogas_L4},
+	{0,foot_ankle_sleg_gogas_L1, foot_ankle_sleg_gogas_L2, foot_ankle_sleg_gogas_L3, foot_ankle_sleg_gogas_L4},
+	{0,foot_ankle_sleg_bleg_again_gogas_L1, foot_ankle_sleg_bleg_again_gogas_L2, foot_ankle_sleg_bleg_again_gogas_L3, foot_ankle_sleg_bleg_again_gogas_L4},
+	{0,foot_ankle_sleg_bleg_outgas_L1, foot_ankle_sleg_bleg_outgas_L2, foot_ankle_sleg_bleg_outgas_L3, foot_ankle_sleg_bleg_outgas_L4}	
 };
 typedef struct KEY_TAG{
   u32 time;                        
@@ -119,12 +165,12 @@ typedef struct MODE_TAG{
   u8 temptime;
   u8 buf[10];
 }MODE_T;
-typedef enum MODE_ENUM{
-		GENTLE,
-		RELAX,
-		VIGOROUS,
-		EXERCISE 
-}MODE_E;
+//typedef enum MODE_ENUM{
+//		GENTLE,
+//		RELAX,
+//		VIGOROUS,
+//		EXERCISE 
+//}MODE_E;
 typedef enum AIP1642_ENUM{
 		UI_NONE,
 		UI_L1,
@@ -134,10 +180,10 @@ typedef enum AIP1642_ENUM{
 		UI_L5,
 		UI_L1L2
 }AIP1642_E;
-typedef struct GASAG_TAG{         
-     u8 gotime;
-	u8 outtime;
-}GASAG_T;
+//typedef struct GASAG_TAG{         
+//     u8 gotime;
+//	u8 outtime;
+//}GASAG_T;
 typedef struct DATA_TAG{         
      	u8 len;
 	u8 buf[6];
@@ -169,7 +215,6 @@ typedef enum TIME_ENUM{
 }TIME_E;
 
 typedef enum BODY_ENUM{
-	
 	FOOT,
 	ANKLE,
 	SLEG,
@@ -192,9 +237,9 @@ KEY_TAG_T xdata key3;
 KEY_TAG_T xdata key4;
 KEY_TAG_T xdata key5;
 MODE_T xdata t_mode;
-GASAG_T xdata t_upgas;
-GASAG_T xdata t_downgas;
-GASAG_T xdata t_twogas;
+//GASAG_T xdata t_upgas;
+//GASAG_T xdata t_downgas;
+//GASAG_T xdata t_twogas;
 DATA_T xdata t_data;
 u8 xdata  mode=0;   //按摩模式 
 u8 xdata modelove=0;
@@ -226,8 +271,9 @@ u8 xdata twogasbagrun;
 //u8 xdata databuf[10];
 u8 xdata strengthflag=1;
 u8 xdata strengthpara=1;
-
-
+u32 xdata stoptime;
+u8 xdata stopflag;
+u8 xdata again=0;
 void ui_show(u8 para1,u8 para2,u8 para3,u8 para4)
 {
 	SHOW1=para1;
@@ -266,72 +312,11 @@ void valve_process(u8 para1,u8 para2,u8 para3,u8 para4)
 		VALVE4=para4;
 
 }
-
-void heat_process()
+void heat_process(u8 para1,u8 para2)
 {
-
-
+		FOOTHEAT(para1);
+		KNEEHEAT( para2);
 }
-//void strength_process(u8 steppara,u8 para)
-//{
-//	switch(steppara) {
-//              case FOOT:           //脚底
-//                     if(para==1)
-//			t_mode.time = foot_gogas_L1;
-
-//			break;
-//		case ANKLE:         //脚踝
-//			t_mode.time = t_downgas.gotime;
-
-//			break;
-//              case SLEG:           //小腿
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//		case BLEG:         //大腿
-//			t_mode.time = t_downgas.gotime;
-
-//			break;
-//              case FOOT_ANKLE:           //脚底+ 脚踝
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//              case FOOT_SLEG:           //脚底+ 小腿
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//		 case FOOT_BLEG:           //脚底+ 大腿
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//              case ANKLE_SLEG:           //脚踝+ 小腿
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//		 case ANKLE_BLEG:           //脚踝+ 大腿
-//			t_mode.time = t_upgas.gotime;
-
-//			break;
-//		 case SLEG_BLEG:           //小腿+ 大腿
-//			t_mode.time = t_upgas.gotime;
-//			PUMP=1;
-//			valve_process(0,0,1,1); 
-//			twogasbagrun=0;
-//			break;
-//		case FOOT_ANKLE_SLEG:         //脚底+ 脚踝+小腿
-//			t_mode.time = t_downgas.gotime;
-
-//			break;
-//              case FOOT_ANKLE_SLEG_BLEG:            //脚底+ 脚踝+小腿+大腿
-//			t_mode.time = t_upgas.gotime;
-//			twogasbagrun=0;
-//			break;	
-//              case ALL_OUTGAS:            //脚底+ 脚踝+小腿+大腿
-//			t_mode.time = t_upgas.gotime;
-//			break;	
-//	}
-
-//}
 void mode_process()
 {
 	switch(mode){
@@ -341,7 +326,9 @@ void mode_process()
 		t_mode.buf[2] = SLEG;
 		t_mode.buf[3] = BLEG;
 		t_mode.num = 4;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
+
 		break;
 	case 2:
 		t_mode.buf[0] = FOOT;
@@ -349,6 +336,7 @@ void mode_process()
 		t_mode.buf[2] = ANKLE_SLEG;
 		t_mode.buf[3] = SLEG_BLEG;
 		t_mode.num = 4;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
 	case 3:
@@ -359,12 +347,14 @@ void mode_process()
 		t_mode.buf[4]=ANKLE_SLEG;
 		t_mode.buf[5]=ANKLE_BLEG;
 		t_mode.num = 6;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
 	case 4:
 		t_mode.buf[0]=FOOT_ANKLE_SLEG_BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
 	case 5:
@@ -373,6 +363,7 @@ void mode_process()
 		t_mode.buf[0]=FOOT;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
 	case 7:
@@ -385,44 +376,19 @@ void mode_process()
 		t_mode.buf[0]=BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
+		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
 	}
+		feethot = tempL3;
+		kneehot=tempL3;
+				hotflag=5;
+		kneelast = kneehot;
+		feetlast = feethot;
+		again=0;
 		if(step!=t_mode.buf[0])clear_stepsec();
 		t_mode.p=0;
 }
-//void pushdata(u8 a,u16 b)  	//	功能字   数据
-//{
-//		u8 i;
-//		pushbuf[0] = headpara; //协议头
-//	       pushbuf[1] = a;   //功能字
-//		pushbuf[2] = 1;  //数据长度
-//		pushbuf[3] = b;  //数据位
-//		pushbuf[4] = pushbuf[3];  //校验位
-//		pushbuf[5] = 0xff;  //#  协议尾
-//			for(i=0;i<6;i++)
-//				{
-//		            putchar(pushbuf[i]);
-
-//			}
-//	
-//	
-//}
-//void pushtime(u8 a,u16 b)
-//{
-//		u8 i;
-//		pushbuf[0] = headpara; //协议头
-//	       pushbuf[1] = a;   //功能字
-//		pushbuf[2] = 2;  //数据长度
-//		pushbuf[3] = b/256;  //数据位
-//		pushbuf[4] = b%256;  //数据位
-//		pushbuf[5] = 0xff;  //#  协议尾
-//		for(i=0;i<6;i++)
-//			{
-//		        putchar(pushbuf[i]);
-
-//		}
-//}
 
 
 //按键扫描
@@ -620,6 +586,7 @@ void key_process(void)
 		mode++;
 		if(mode>5)mode=1;
 		mode_process();
+
 	}
 	else if(key==KEY2SHORT){//局部
 			if(mode<=5)mode=6;
@@ -628,12 +595,14 @@ void key_process(void)
 			if(mode>8)mode=6;
 		}
 		mode_process();
+
 	}
 	else if(key==KEY3LONG){  //开关
 					if(runstate==0){
 						runstate=1;
 						mode = 1;
 						mode_process();
+	
 					}
 					else if(runstate==1){
 						runstate=0;
@@ -643,7 +612,16 @@ void key_process(void)
 					}
 	}
 	else if(key==KEY3SHORT){ //开关
-
+		if(runstate==1){
+			runstate=2;
+		 t_mode.temptime = get_stepsec();	
+ 		stoptime=getsystimes();
+		stopflag=0;
+		}
+		else if(runstate==2){
+			runstate = 1;
+			set_stepsec(t_mode.temptime);
+		}
 	}
 	else if(key==KEY4SHORT){   //强度 
 		strengthflag++;
@@ -1043,9 +1021,15 @@ void control_process(void)
 		valve_process(0,0,0,0); 
 		step=0xff;
 		ui_show(0, 0, 0, 0);
+		FOOTHEAT(0);
+		KNEEHEAT(0);
 	}
 	else if(runstate==1){  //开机
-		t_mode.time = gastime[step][strengthflag];
+		FOOTHEAT(feethot);
+		KNEEHEAT(kneehot);
+		if(again==0){
+		t_mode.time = gastime[step][strengthflag];}
+		else { t_mode.time = agastime[step][strengthflag];}
 		if(get_stepsec()==t_mode.time){
 			clear_stepsec();
 			t_mode.p++;
@@ -1127,8 +1111,9 @@ void control_process(void)
 			break;	
               case ALL_OUTGAS:            //脚底+ 脚踝+小腿+大腿
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			PUMP=0;
 			valve_process(0,0,0,0); 
+			again=1;
 			//twogasbagrun=0;
 			break;			
 //              case 2:   //双气囊打气
@@ -1154,7 +1139,19 @@ void control_process(void)
 	}
 	else if(runstate==2) { //暂停
                  PUMP=0;
-
+		FOOTHEAT(0);
+		KNEEHEAT(0);
+		if(getsystimes()-stoptime>=500){
+			stoptime=getsystimes();
+			if(stopflag==0){ 
+				stopflag=1;
+				ui_show(0, 0, 0, 1);
+				}
+			else {
+					stopflag=0;
+				ui_show(0, 0, 0, 0);
+			}
+		}		
 	}
 
 

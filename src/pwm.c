@@ -71,12 +71,13 @@ R	1.6	PWM2
 //{
 //    PWM2DH=para;
 //}
-void KEYLED(u8 para)
-{
-    PWM1DH=para;
-}
-void HEATSLICE(u8 para)
+
+void FOOTHEAT(u8 para)
 {
     PWM0DH=para;
+}
+void KNEEHEAT(u8 para)
+{
+    PWM1DH=para;
 }
 
