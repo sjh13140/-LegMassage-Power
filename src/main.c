@@ -19,21 +19,84 @@
 
 #define KEYTIME 1000
 
-#define upgasbag_gogas_hightime     45          // 36
-#define upgasbag_gogas_midtime      40           // 31
-#define upgasbag_gogas_lowtime       33            //24
+#define foot_gogas_L1 10
+#define foot_gogas_L2 15
+#define foot_gogas_L3 20
+#define foot_gogas_L4 25
 
-#define downgasbag_gogas_hightime    34//30
-#define downgasbag_gogas_midtime     31 //27 
-#define downgasbag_gogas_lowtime      25  //21
+#define ankle_gogas_L1 10
+#define ankle_gogas_L2 15
+#define ankle_gogas_L3 20
+#define ankle_gogas_L4 25
 
-#define twogasbag_gogas_hightime          45//41
-#define twogasbag_outgas_hightime         2
-#define twogasbag_gogas_midtime          39//35
-#define twogasbag_outgas_midtime        2
-#define twogasbag_gogas_lowtime           30//26
-#define twogasbag_outgas_lowtime         2
+#define sleg_gogas_L1 10
+#define sleg_gogas_L2 15
+#define sleg_gogas_L3 20
+#define sleg_gogas_L4 25
 
+#define bleg_gogas_L1 10
+#define bleg_gogas_L2 15
+#define bleg_gogas_L3 20
+#define bleg_gogas_L4 25
+
+#define foot_ankle_gogas_L1 10
+#define foot_ankle_gogas_L2 10
+#define foot_ankle_gogas_L3 10
+#define foot_ankle_gogas_L4 10
+
+#define foot_sleg_gogas_L1 10
+#define foot_sleg_gogas_L2 10
+#define foot_sleg_gogas_L3 10
+#define foot_sleg_gogas_L4 10
+
+#define foot_bleg_gogas_L1 10
+#define foot_bleg_gogas_L2 10
+#define foot_bleg_gogas_L3 10
+#define foot_bleg_gogas_L4 10
+
+#define ankle_sleg_gogas_L1 10
+#define ankle_sleg_gogas_L2 10
+#define ankle_sleg_gogas_L3 10
+#define ankle_sleg_gogas_L4 10
+
+#define ankle_bleg_gogas_L1 10
+#define ankle_bleg_gogas_L2 10
+#define ankle_bleg_gogas_L3 10
+#define ankle_bleg_gogas_L4 10
+
+#define sleg_bleg_gogas_L1 10
+#define sleg_bleg_gogas_L2 10
+#define sleg_bleg_gogas_L3 10
+#define sleg_bleg_gogas_L4 10
+
+#define foot_ankle_sleg_gogas_L1 10
+#define foot_ankle_sleg_gogas_L2 10
+#define foot_ankle_sleg_gogas_L3 10
+#define foot_ankle_sleg_gogas_L4 10
+
+#define foot_ankle_sleg_bleg_gogas_L1 10
+#define foot_ankle_sleg_bleg_gogas_L2 10
+#define foot_ankle_sleg_bleg_gogas_L3 10
+#define foot_ankle_sleg_bleg_gogas_L4 10
+
+#define foot_ankle_sleg_bleg_outgas_L1 10
+#define foot_ankle_sleg_bleg_outgas_L2 10
+#define foot_ankle_sleg_bleg_outgas_L3 10
+#define foot_ankle_sleg_bleg_outgas_L4 10
+u8 code gastime[13][5]={
+	{0,foot_gogas_L1, foot_gogas_L2, foot_gogas_L3, foot_gogas_L4},
+	{0,ankle_gogas_L1, ankle_gogas_L2, ankle_gogas_L3, ankle_gogas_L4},
+	{0,sleg_gogas_L1, sleg_gogas_L2, sleg_gogas_L3, sleg_gogas_L4},
+	{0,bleg_gogas_L1, bleg_gogas_L2, bleg_gogas_L3,bleg_gogas_L4},
+	{0,foot_ankle_gogas_L1, foot_ankle_gogas_L2, foot_ankle_gogas_L3, foot_ankle_gogas_L4},
+	{0,foot_sleg_gogas_L1,  foot_sleg_gogas_L2,  foot_sleg_gogas_L3,  foot_sleg_gogas_L4},
+	{0,foot_bleg_gogas_L1, foot_bleg_gogas_L2, foot_bleg_gogas_L3,foot_bleg_gogas_L4},
+	{0,ankle_sleg_gogas_L1, ankle_sleg_gogas_L2, ankle_sleg_gogas_L3, ankle_sleg_gogas_L4},
+	{0,ankle_bleg_gogas_L1, ankle_bleg_gogas_L2, ankle_bleg_gogas_L3, ankle_bleg_gogas_L4},
+	{0,sleg_bleg_gogas_L1, sleg_bleg_gogas_L2, sleg_bleg_gogas_L3, sleg_bleg_gogas_L4},
+	{0,foot_ankle_sleg_gogas_L1, foot_ankle_sleg_gogas_L2, foot_ankle_sleg_gogas_L3, foot_ankle_sleg_gogas_L4},
+	{0,foot_ankle_sleg_bleg_gogas_L1, foot_ankle_sleg_bleg_gogas_L2, foot_ankle_sleg_bleg_gogas_L3, foot_ankle_sleg_bleg_gogas_L4}
+};
 typedef struct KEY_TAG{
   u32 time;                        
   u8 state;   
@@ -121,6 +184,8 @@ typedef enum BODY_ENUM{
 	FOOT_ANKLE_SLEG_BLEG,
 	ALL_OUTGAS
 }BODY_E;
+
+
 KEY_TAG_T xdata key1;
 KEY_TAG_T xdata key2;
 KEY_TAG_T xdata key3;
@@ -161,6 +226,8 @@ u8 xdata twogasbagrun;
 //u8 xdata databuf[10];
 u8 xdata strengthflag=1;
 u8 xdata strengthpara=1;
+
+
 void ui_show(u8 para1,u8 para2,u8 para3,u8 para4)
 {
 	SHOW1=para1;
@@ -199,30 +266,90 @@ void valve_process(u8 para1,u8 para2,u8 para3,u8 para4)
 		VALVE4=para4;
 
 }
+
 void heat_process()
 {
 
 
 }
-void strength_process()
-{
+//void strength_process(u8 steppara,u8 para)
+//{
+//	switch(steppara) {
+//              case FOOT:           //脚底
+//                     if(para==1)
+//			t_mode.time = foot_gogas_L1;
 
+//			break;
+//		case ANKLE:         //脚踝
+//			t_mode.time = t_downgas.gotime;
 
-}
+//			break;
+//              case SLEG:           //小腿
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//		case BLEG:         //大腿
+//			t_mode.time = t_downgas.gotime;
+
+//			break;
+//              case FOOT_ANKLE:           //脚底+ 脚踝
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//              case FOOT_SLEG:           //脚底+ 小腿
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//		 case FOOT_BLEG:           //脚底+ 大腿
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//              case ANKLE_SLEG:           //脚踝+ 小腿
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//		 case ANKLE_BLEG:           //脚踝+ 大腿
+//			t_mode.time = t_upgas.gotime;
+
+//			break;
+//		 case SLEG_BLEG:           //小腿+ 大腿
+//			t_mode.time = t_upgas.gotime;
+//			PUMP=1;
+//			valve_process(0,0,1,1); 
+//			twogasbagrun=0;
+//			break;
+//		case FOOT_ANKLE_SLEG:         //脚底+ 脚踝+小腿
+//			t_mode.time = t_downgas.gotime;
+
+//			break;
+//              case FOOT_ANKLE_SLEG_BLEG:            //脚底+ 脚踝+小腿+大腿
+//			t_mode.time = t_upgas.gotime;
+//			twogasbagrun=0;
+//			break;	
+//              case ALL_OUTGAS:            //脚底+ 脚踝+小腿+大腿
+//			t_mode.time = t_upgas.gotime;
+//			break;	
+//	}
+
+//}
 void mode_process()
 {
 	switch(mode){
 	case 1:
-		t_mode.buf[0]=FOOT;
-		t_mode.buf[1]=ANKLE;
-		t_mode.buf[2]=SLEG;
-		t_mode.buf[3]=BLEG;
+		t_mode.buf[0] = FOOT;
+		t_mode.buf[1] = ANKLE;
+		t_mode.buf[2] = SLEG;
+		t_mode.buf[3] = BLEG;
+		t_mode.num = 4;
+		//t_mode.p = 0;
 		break;
 	case 2:
-		t_mode.buf[0]=FOOT;
-		t_mode.buf[1]=FOOT_ANKLE;
-		t_mode.buf[2]=FOOT_ANKLE_SLEG;
-		t_mode.buf[3]=FOOT_ANKLE_SLEG_BLEG;
+		t_mode.buf[0] = FOOT;
+		t_mode.buf[1] = FOOT_ANKLE;
+		t_mode.buf[2] = ANKLE_SLEG;
+		t_mode.buf[3] = SLEG_BLEG;
+		t_mode.num = 4;
+		//t_mode.p = 0;
 		break;
 	case 3:
 		t_mode.buf[0]=FOOT_ANKLE;
@@ -231,27 +358,38 @@ void mode_process()
 		t_mode.buf[3]=FOOT_BLEG;
 		t_mode.buf[4]=ANKLE_SLEG;
 		t_mode.buf[5]=ANKLE_BLEG;
+		t_mode.num = 6;
+		//t_mode.p = 0;
 		break;
 	case 4:
 		t_mode.buf[0]=FOOT_ANKLE_SLEG_BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
+		t_mode.num = 2;
+		//t_mode.p = 0;
 		break;
 	case 5:
-
 		break;
 	case 6:
 		t_mode.buf[0]=FOOT;
 		t_mode.buf[1]=ALL_OUTGAS;
+		t_mode.num = 2;
+		//t_mode.p = 0;
 		break;
 	case 7:
 		t_mode.buf[0]=SLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
+		t_mode.num = 2;
+		//t_mode.p = 0;
 		break;
 	case 8:
 		t_mode.buf[0]=BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
+		t_mode.num = 2;
+		//t_mode.p = 0;
 		break;
 	}
+		if(step!=t_mode.buf[0])clear_stepsec();
+		t_mode.p=0;
 }
 //void pushdata(u8 a,u16 b)  	//	功能字   数据
 //{
@@ -481,7 +619,7 @@ void key_process(void)
 	if(key==KEY1SHORT){  //自动
 		mode++;
 		if(mode>5)mode=1;
-
+		mode_process();
 	}
 	else if(key==KEY2SHORT){//局部
 			if(mode<=5)mode=6;
@@ -489,13 +627,13 @@ void key_process(void)
                      mode++;
 			if(mode>8)mode=6;
 		}
-	
+		mode_process();
 	}
 	else if(key==KEY3LONG){  //开关
 					if(runstate==0){
 						runstate=1;
-						mode = modelove;
-						
+						mode = 1;
+						mode_process();
 					}
 					else if(runstate==1){
 						runstate=0;
@@ -904,10 +1042,10 @@ void control_process(void)
 		PUMP=0;
 		valve_process(0,0,0,0); 
 		step=0xff;
-		ui_show(0,0, 0, 0);
+		ui_show(0, 0, 0, 0);
 	}
 	else if(runstate==1){  //开机
-
+		t_mode.time = gastime[step][strengthflag];
 		if(get_stepsec()==t_mode.time){
 			clear_stepsec();
 			t_mode.p++;
@@ -917,82 +1055,81 @@ void control_process(void)
            switch(step)
            	{
               case FOOT:           //脚底
-			t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(1,0,0,0); // FOOT ANKLE SLEG BLEG
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		case ANKLE:         //脚踝
-			t_mode.time = t_downgas.gotime;
+			//t_mode.time = t_downgas.gotime;
 			PUMP=1;
 			valve_process(0,1,0,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
               case SLEG:           //小腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(0,0,1,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		case BLEG:         //大腿
-			t_mode.time = t_downgas.gotime;
+			//t_mode.time = t_downgas.gotime;
 			PUMP=1;
 			valve_process(0,0,0,1); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
               case FOOT_ANKLE:           //脚底+ 脚踝
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(1,1,0,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
               case FOOT_SLEG:           //脚底+ 小腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(1,0,1,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		 case FOOT_BLEG:           //脚底+ 大腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(1,0,0,1); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
               case ANKLE_SLEG:           //脚踝+ 小腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(0,1,1,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		 case ANKLE_BLEG:           //脚踝+ 大腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(0,1,0,1); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		 case SLEG_BLEG:           //小腿+ 大腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(0,0,1,1); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
 		case FOOT_ANKLE_SLEG:         //脚底+ 脚踝+小腿
-			t_mode.time = t_downgas.gotime;
+			//t_mode.time = t_downgas.gotime;
 			PUMP=1;
 			valve_process(1,1,1,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;
               case FOOT_ANKLE_SLEG_BLEG:            //脚底+ 脚踝+小腿+大腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(1,1,1,1); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;	
               case ALL_OUTGAS:            //脚底+ 脚踝+小腿+大腿
-			t_mode.time = t_upgas.gotime;
+			//t_mode.time = t_upgas.gotime;
 			PUMP=1;
 			valve_process(0,0,0,0); 
-			twogasbagrun=0;
+			//twogasbagrun=0;
 			break;			
 //              case 2:   //双气囊打气
 //              	if(twogasbagrun==1){
@@ -1094,9 +1231,9 @@ ui_show(0,0, 0, 0);
 		//ble_process();
 
 //		//输出控制
-//		control_process();
+		control_process();
 //		数码管显示
-       show_aip1642(SHOW1,SHOW2,SHOW3,SHOW4);
+       	show_aip1642(SHOW1,SHOW2,SHOW3,SHOW4);
 //		运行定时
 //		alarmtime_process();
 		cleardog(1);
