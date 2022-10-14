@@ -73,7 +73,7 @@ unsigned char res;
 			recvstart=1;
 		}
 		if(recvstart==1){
-			if(res==0xff)  //#
+			if(res==endpara)  //#
 			{
 	                    USART_RX_STA = USART_RX_STA  | 0x80;
 				recvstart=0;

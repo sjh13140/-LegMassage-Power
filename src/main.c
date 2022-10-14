@@ -189,29 +189,24 @@ typedef struct DATA_TAG{
 	u8 buf[6];
 }DATA_T;
 typedef enum TIME_ENUM{
-   	SET_MODE=1,
-	 SET_MODELOVE,
-	  CLR_MODELOVE,
-	  SET_ALARMTIME,
-	  GET_RUNTIME,
-	  GET_MODELOVE,
-	  GET_POWERSTATE,
-	  GET_CHARGSTATE,
+   	SET_RUNSTATE=1,
+	 GET_RUNSTATE,
+	  SET_MODE,
 	  GET_MODE,
-	  GET_ALARMTIME,
+	  SET_LOVEMODE,
+	  GET_LOVEMODE,
+	  CLR_LOVEMODE,
+	  SET_HEAT,
+	  GET_HEAT,
+	  SET_STRENGTH,
+	  GET_STRENGTH,
+	  SET_RUNTIME,
+	  GET_RUNTIME,
+	  GET_RUNSTAMP,
 	  RST_SYS,
 	  GET_VER,
-	  GET_SHOCKSTATE,
-	  GET_HOTSTATE,
-	  GET_RUNSTATE,
-	  GET_RUNSTATE_MODE,
-	  GET_RUNSTATE_MODE_MODELOVE_ALARMTIME_SHOCK_HOT,
-	  GET_RUNSTATE_CHARGSTATE,
-	  GET_RUNSTATE_POWERSTATE,
-	  SET_SHOCK,
-	  SET_HOT,
+	  GET_ALLSTATE,
 	  ERR_DATA=0XEF
-
 }TIME_E;
 
 typedef enum BODY_ENUM{
@@ -249,6 +244,7 @@ u8 xdata eeprombuf[2];
 //u8 xdata powerstate=0;  //电量状态  0:表示电量不足 1:表示电量充足2:表示电量不足
 u16 xdata temp=0;  //串口接收存放校验和
 u8 xdata alarmtime=15;  //定时时间
+u8 xdata alarmflag=1;
 u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
 //u8 xdata pushbuf[20]; //发送数组
 //u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
@@ -265,9 +261,9 @@ u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
 u8 xdata SHOW3=UI_NONE;
 u8 xdata SHOW4=UI_NONE;
-u8 xdata dir;
-u8 xdata cnt;
-u8 xdata twogasbagrun;
+//u8 xdata dir;
+//u8 xdata cnt;
+//u8 xdata twogasbagrun;
 //u8 xdata databuf[10];
 u8 xdata strengthflag=1;
 u8 xdata strengthpara=1;
@@ -295,7 +291,7 @@ void pushlongdata(u8 a,u8 *buf,u8 len)
 	}
 	tempbuf[3+len] = sum/256;  //校验位
 	tempbuf[3+len+1] = sum%256;
-	tempbuf[3+len+2] = 0xff;  //#  协议尾
+	tempbuf[3+len+2] = endpara;  //#  协议尾
 		for(i=0;i<6+len;i++)
 			{
 	            putchar(tempbuf[i]);
@@ -646,7 +642,7 @@ void key_process(void)
 }
 
 
- #if 0
+ #if 1
 //蓝牙传输数据处理
 void ble_process(void)
 {
@@ -669,109 +665,27 @@ void ble_process(void)
 					       temp=0;
 						if(USART_RX_BUF[1]==SET_MODE)  //模式
 						{
-		 					       if(runstate==0){ 
-//								        adc_value = adc_get_average(10);
-//									if(adc_value>bat_lowpower)powerstate=1;
-//									else if(adc_value<=bat_lowpower&&adc_value>bat_nonepower)powerstate=2;
-//									else powerstate=0;
-								}
-						   
-							       if(runstate!=3&&powerstate!=0){
 									clear_alarmsec();
 									firsttime = get_alarmsec();
 									runstate=1;
 									mode=USART_RX_BUF[3];
-									if(mode==0){
-										t_upgas.gotime = upgasbag_gogas_lowtime;
-										t_downgas.gotime = downgasbag_gogas_lowtime;
-										t_twogas.gotime=twogasbag_gogas_lowtime;
-										t_twogas.outtime=twogasbag_outgas_lowtime;
-										t_mode.buf[0]=0;
-										t_mode.buf[1]=1;
-										t_mode.num=2;
-										t_mode.time = t_upgas.gotime;
-										shockpara = 1;
-										temppara=128;
-										SHOW1=UI_GENTLE;
-										SHOW2=3;
-										SHOW3=0;
-										SHOW4=UI_L1;
-									}
-									else if(mode==1){
-										t_upgas.gotime = upgasbag_gogas_midtime;
-										t_downgas.gotime = downgasbag_gogas_midtime;
-										t_twogas.gotime=twogasbag_gogas_midtime;
-										t_twogas.outtime=twogasbag_outgas_midtime;
-										t_mode.buf[0]=0;
-										t_mode.buf[1]=1;
-										t_mode.num=2;
-										t_mode.time = t_upgas.gotime;
-										shockpara = 2;
-										temppara=128;
-										SHOW1=UI_RELAX;
-										SHOW2=3;
-										SHOW3=0;
-										SHOW4=UI_L2;
-									}
-									else if(mode==2){
-										t_upgas.gotime = upgasbag_gogas_hightime;
-										t_downgas.gotime = downgasbag_gogas_hightime;
-										t_twogas.gotime=twogasbag_gogas_hightime;
-										t_twogas.outtime=twogasbag_outgas_hightime;
-										t_mode.buf[0]=2;
-										t_mode.buf[1]=3;
-										t_mode.num=2;
-										t_mode.time = t_twogas.gotime;
-										shockpara = 3;
-										temppara=255;
-										SHOW1=UI_VIGOROUS;
-										SHOW2=5;
-										SHOW3=0;
-										SHOW4=UI_L3;
-									}
-									else if(mode==3){
-										t_upgas.gotime = upgasbag_gogas_midtime;
-										t_downgas.gotime = downgasbag_gogas_midtime;
-										t_twogas.gotime=twogasbag_gogas_midtime;
-										t_twogas.outtime=twogasbag_outgas_midtime;
-										t_mode.buf[0]=0;
-										t_mode.buf[1]=1;
-										t_mode.buf[2]=2;
-										t_mode.buf[3]=3;
-										t_mode.num=4;
-										t_mode.time =t_upgas.gotime;
-										shockpara = 2;
-										temppara=255;
-										SHOW1=UI_EXERCISE;
-										SHOW2=5;
-										SHOW3=0;
-										SHOW4=UI_L2;
-									}
+									
 									if(step!=t_mode.buf[0])clear_stepsec();
 									t_mode.p=0;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=mode;
 									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 									pushlongdata(SET_MODE,t_data.buf,t_data.len);
-								} else{
-								     if(runstate==2){
-										t_data.len=0;
-										t_data.buf[t_data.len++]=chrgstate;
-										for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-										pushlongdata(GET_CHARGSTATE,t_data.buf,t_data.len);
-									 }
-								     if(powerstate==0){
-										t_data.len=0;
-										t_data.buf[t_data.len++]=powerstate;
-										for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-										pushlongdata(GET_POWERSTATE,t_data.buf,t_data.len);
-
-									 }
-
-								}
+		
 							
 						} 
-						else if(USART_RX_BUF[1]==SET_MODELOVE)  //添加心动模式
+						else if(USART_RX_BUF[1]==GET_MODE){  //获取模式状态
+						t_data.len=0;
+								t_data.buf[t_data.len++]=mode;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_MODE,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==SET_LOVEMODE)  //添加心动模式
 						{
                                                     	modelove=USART_RX_BUF[3]; 
 								eeprombuf[0]=1; 
@@ -780,10 +694,17 @@ void ble_process(void)
 								t_data.len=0;
 								t_data.buf[t_data.len++]=modelove;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(SET_MODELOVE,t_data.buf,t_data.len);
+								pushlongdata(SET_LOVEMODE,t_data.buf,t_data.len);
 							 
 						}
-						else if(USART_RX_BUF[1]==CLR_MODELOVE)  //删除心动模式
+						else if(USART_RX_BUF[1]==GET_LOVEMODE){  //获取收藏
+                                                    					t_data.len=0;
+								t_data.buf[t_data.len++]=modelove;
+			
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_LOVEMODE,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==CLR_LOVEMODE)  //删除心动模式
 						{
                                                       	modelove = 0;
 								eeprombuf[0]=1; 
@@ -792,188 +713,116 @@ void ble_process(void)
 								t_data.len=0;
 								t_data.buf[t_data.len++]=modelove;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(CLR_MODELOVE,t_data.buf,t_data.len);
+								pushlongdata(CLR_LOVEMODE,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==SET_ALARMTIME)  //定时设置
+						else if(USART_RX_BUF[1]==SET_HEAT){  //设置加热
+						             hotflag = USART_RX_BUF[3];
+								if(hotflag==0) {
+									SHOW2=0;
+									SHOW3=0;
+								}
+								else if(hotflag==128){
+									SHOW2=3;
+									SHOW3=0;
+
+								}
+								else if(hotflag==255){
+									SHOW2=5;
+									SHOW3=0;
+
+								}
+                                          			t_data.len=0;
+  								t_data.buf[t_data.len++]= hotflag;
+  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								pushlongdata(SET_HEAT,t_data.buf,t_data.len);
+						}
+												else if(USART_RX_BUF[1]==GET_HEAT){  //获取获取加热状态
+                                          						t_data.len=0;
+								t_data.buf[t_data.len++]= hotflag;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_HEAT,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==SET_STRENGTH){  //设置震动
+						             strengthflag = USART_RX_BUF[3];
+								if(strengthflag==0){
+									SHOW4=UI_NONE;
+								}
+								else if(strengthflag==1){
+									SHOW4=UI_L1;
+								}
+								else if(strengthflag==2){
+									SHOW4=UI_L2;
+								}
+								else if(strengthflag==3){
+									SHOW4=UI_L3;
+								}
+                                          		t_data.len=0;
+  								t_data.buf[t_data.len++]= strengthflag;
+  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								pushlongdata(SET_STRENGTH,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==GET_STRENGTH){  //获取震动状态
+                               						t_data.len=0;
+								t_data.buf[t_data.len++]= strengthflag;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_STRENGTH,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==GET_RUNTIME)  //定时设置
 						{
 
 						                       clear_alarmsec();
 											   firsttime=0;
-									if(USART_RX_BUF[3]==1)  //5
-									{
-		                                                         alarmtime = 5;
-																 
-															                
-									}
-									else if(USART_RX_BUF[3]==2)  //10
-										{
-		                                             alarmtime = 10;
-														 
-										
-									}
-									else if(USART_RX_BUF[3]==3) //15
-										{
-										alarmtime = 15;
-											
-										
-
-									}
-									else if(USART_RX_BUF[3]==4)  //20
-										{
-		                                             alarmtime = 20;
-													 
-										
-									}
-									else if(USART_RX_BUF[3]==5)  //25
-										{
-		                                             alarmtime = 25;
-										
-									}
-									else if(USART_RX_BUF[3]==6)  //30
-										{
-		                                             alarmtime = 30;
-										
-									}
-								t_data.len=0;
-								t_data.buf[t_data.len++]=alarmtime;
+											   alarmflag = USART_RX_BUF[3];
+									if(alarmflag==1)  alarmtime = 5;
+									else if(alarmflag==2) alarmtime = 10; 
+									else if(alarmflag==3) alarmtime = 15;
+									else if(alarmflag==4) alarmtime = 20;
+									else if(alarmflag==5) alarmtime = 25;
+									else if(alarmflag==6)  alarmtime = 30;
+									t_data.len=0;
+								t_data.buf[t_data.len++]=alarmflag;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(SET_ALARMTIME,t_data.buf,t_data.len);
+								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
 									
 						}
-						else if(USART_RX_BUF[1]==GET_RUNTIME)  //获取时间戳
+						else if(USART_RX_BUF[1]==GET_RUNTIME){  //获取定时值
+								t_data.len=0;
+								t_data.buf[t_data.len++]=alarmflag;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==GET_RUNSTAMP)  //获取时间戳
 						{
                                                      // putchar(get_alarmsec());  //发送时间戳
                         					t_data.len=0;
 								t_data.buf[t_data.len++]=get_alarmsec()/256;
 								t_data.buf[t_data.len++]=get_alarmsec()%256;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
-							    						 
-
-						}
-						else if(USART_RX_BUF[1]==GET_MODELOVE){  //获取收藏
-                                                    					t_data.len=0;
-								t_data.buf[t_data.len++]=modelove;
-			
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_MODELOVE,t_data.buf,t_data.len);
-						}
-
-						else if(USART_RX_BUF[1]==GET_POWERSTATE){  //获取电量状态
-//						       	        adc_value = adc_get_average(10);
-//								if(adc_value>bat_lowpower)powerstate=1;
-//								else if(adc_value<=bat_lowpower&&adc_value>bat_nonepower)powerstate=2;
-//								else powerstate=0;
-                                                 					t_data.len=0;
-								t_data.buf[t_data.len++]=powerstate;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_POWERSTATE,t_data.buf,t_data.len);
-						}
-
-						else if(USART_RX_BUF[1]==GET_CHARGSTATE){  //获取充电状态
-                                                                            					t_data.len=0;
-								t_data.buf[t_data.len++]=chrgstate;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_CHARGSTATE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_MODE){  //获取模式状态
-						t_data.len=0;
-								t_data.buf[t_data.len++]=mode;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_MODE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_ALARMTIME){  //获取定时值
-						t_data.len=0;
-								t_data.buf[t_data.len++]=alarmtime;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_ALARMTIME,t_data.buf,t_data.len);
+								pushlongdata(GET_RUNSTAMP,t_data.buf,t_data.len);	    						
 						}
 						else if(USART_RX_BUF[1]==RST_SYS){  //重启
-						t_data.len=0;
+								t_data.len=0;
 								t_data.buf[t_data.len++]=0x01;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 							   while(1);
 						}
 						else if(USART_RX_BUF[1]==GET_VER){  //获取程序版本
-						t_data.len=0;
+								t_data.len=0;
 								t_data.buf[t_data.len++]= codeverion;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==GET_SHOCKSTATE){  //获取震动状态
-                               						t_data.len=0;
-								t_data.buf[t_data.len++]= shockpara;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_SHOCKSTATE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_HOTSTATE){  //获取获取加热状态
-                                          						t_data.len=0;
-								t_data.buf[t_data.len++]= temppara;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_HOTSTATE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_RUNSTATE){  //获取运行状态
-                                          						t_data.len=0;
-  								t_data.buf[t_data.len++]= runstate;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(GET_SHOCKSTATE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_RUNSTATE_MODE){  //获取运行与模式状态
-                                                    						t_data.len=0;
-								t_data.buf[t_data.len++]= runstate;
-								t_data.buf[t_data.len++]= mode;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_RUNSTATE_MODE,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==GET_RUNSTATE_MODE_MODELOVE_ALARMTIME_SHOCK_HOT){  //获取多种状态
+						else if(USART_RX_BUF[1]==GET_ALLSTATE){  //获取多种状态
                                                     	t_data.len=0;
 								t_data.buf[t_data.len++]= runstate;
 								t_data.buf[t_data.len++]= mode;
 								t_data.buf[t_data.len++]= modelove;
-								t_data.buf[t_data.len++]= alarmtime;
+								t_data.buf[t_data.len++]= alarmflag;
+								t_data.buf[t_data.len++]= strengthflag;
+								t_data.buf[t_data.len++]= hotflag;								
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_RUNSTATE_MODE_MODELOVE_ALARMTIME_SHOCK_HOT,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==SET_SHOCK){  //设置震动
-						             shockpara = USART_RX_BUF[3];
-								if(shockpara==0){
-									SHOW4=UI_NONE;
-								}
-								else if(shockpara==1){
-									SHOW4=UI_L1;
-								}
-								else if(shockpara==2){
-									SHOW4=UI_L2;
-								}
-								else if(shockpara==3){
-									SHOW4=UI_L3;
-								}
-                                          		t_data.len=0;
-  								t_data.buf[t_data.len++]= shockpara;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(SET_SHOCK,t_data.buf,t_data.len);
-						}
-						else if(USART_RX_BUF[1]==SET_HOT){  //设置加热
-						             temppara = USART_RX_BUF[3];
-								if(temppara==0) {
-									SHOW2=0;
-									SHOW3=0;
-								}
-								else if(temppara==128){
-									SHOW2=3;
-									SHOW3=0;
-
-								}
-								else if(temppara==255){
-									SHOW2=5;
-									SHOW3=0;
-
-								}
-                                          			t_data.len=0;
-  								t_data.buf[t_data.len++]= temppara;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(SET_HOT,t_data.buf,t_data.len);
+								pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);
 						}
 						for(i=0;i< USART_RX_STA;i++)USART_RX_BUF[i]=0;
 						USART_RX_STA=0;
@@ -1116,25 +965,6 @@ void control_process(void)
 			again=1;
 			//twogasbagrun=0;
 			break;			
-//              case 2:   //双气囊打气
-//              	if(twogasbagrun==1){
-//				if(mode==2)t_mode.time=17;
-//				else if(mode==3)t_mode.time=15;
-//			}
-//			else {
-//				t_mode.time = t_twogas.gotime;
-//			} 
-//			PUMP=1;
-//			VALVE1=1;
-//			VALVE2=1;
-//			break;
-//		case 3:   //双气囊泄气
-//		       t_mode.time = t_twogas.outtime;
-//			PUMP=0;
-//			VALVE1=0;
-//			VALVE2=0;
-//			twogasbagrun=1;
-//			break;
 		}		
 	}
 	else if(runstate==2) { //暂停
@@ -1209,19 +1039,16 @@ void main(void)
 		
 	}
 	EA = 1;
-//	SHOW1=5;
-//	SHOW2=2;
-//	SHOW3=1;
-//	SHOW4=2;
-PUMP=0;
-VALVE1=0;
-VALVE2=0;
-VALVE3=0;
-VALVE4=0;
-ui_show(0,0, 0, 0);
+	PUMP=0;
+	VALVE1=0;
+	VALVE2=0;
+	VALVE3=0;
+	VALVE4=0;
+	ui_show(0,0, 0, 0);
 	wdg_init();
   while(1)
 	{
+
 		//按键设置处理
 		key_process();
 //		//蓝牙接收处理

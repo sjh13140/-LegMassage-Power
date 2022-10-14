@@ -5,6 +5,7 @@
 #include <intrins.h>
 #include <stdio.h>
 #define headpara 0x02
+#define endpara 0xff
 #define codeverion 0x01
 typedef unsigned char u8;
 typedef unsigned short int u16;
