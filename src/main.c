@@ -663,7 +663,28 @@ void ble_process(void)
 					if(temp==USART_RX_BUF[USART_RX_STA-1]) //再判断校验位对不对
 					{
 					       temp=0;
-						if(USART_RX_BUF[1]==SET_MODE)  //模式
+						if(USART_RX_BUF[1]==SET_RUNSTATE)  //运行状态
+						{
+									clear_alarmsec();
+									firsttime = get_alarmsec();
+									runstate=USART_RX_BUF[3];
+									mode = 1;
+									if(step!=t_mode.buf[0])clear_stepsec();
+									t_mode.p=0;
+									t_data.len=0;
+									t_data.buf[t_data.len++]=runstate;
+									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+									pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
+		
+							
+						} 
+						else if(USART_RX_BUF[1]==GET_RUNSTATE){  //获取运行状态
+								t_data.len=0;
+								t_data.buf[t_data.len++]=runstate;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_RUNSTATE,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==SET_MODE)  //模式
 						{
 									clear_alarmsec();
 									firsttime = get_alarmsec();
@@ -673,6 +694,7 @@ void ble_process(void)
 									if(step!=t_mode.buf[0])clear_stepsec();
 									t_mode.p=0;
 									t_data.len=0;
+									t_data.buf[t_data.len++]=runstate;
 									t_data.buf[t_data.len++]=mode;
 									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 									pushlongdata(SET_MODE,t_data.buf,t_data.len);
@@ -680,7 +702,7 @@ void ble_process(void)
 							
 						} 
 						else if(USART_RX_BUF[1]==GET_MODE){  //获取模式状态
-						t_data.len=0;
+								t_data.len=0;
 								t_data.buf[t_data.len++]=mode;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_MODE,t_data.buf,t_data.len);
@@ -706,7 +728,7 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==CLR_LOVEMODE)  //删除心动模式
 						{
-                                                      	modelove = 0;
+                                                      	modelove = 1;
 								eeprombuf[0]=1; 
 								eeprombuf[1]=modelove; 
 								iap_eeprom_write(0,eeprombuf,2); 
@@ -718,17 +740,14 @@ void ble_process(void)
 						else if(USART_RX_BUF[1]==SET_HEAT){  //设置加热
 						             hotflag = USART_RX_BUF[3];
 								if(hotflag==0) {
-									SHOW2=0;
-									SHOW3=0;
+								
 								}
 								else if(hotflag==128){
-									SHOW2=3;
-									SHOW3=0;
+								
 
 								}
 								else if(hotflag==255){
-									SHOW2=5;
-									SHOW3=0;
+								
 
 								}
                                           			t_data.len=0;
@@ -736,25 +755,25 @@ void ble_process(void)
   								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(SET_HEAT,t_data.buf,t_data.len);
 						}
-												else if(USART_RX_BUF[1]==GET_HEAT){  //获取获取加热状态
+						else if(USART_RX_BUF[1]==GET_HEAT){  //获取获取加热状态
                                           						t_data.len=0;
 								t_data.buf[t_data.len++]= hotflag;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_HEAT,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==SET_STRENGTH){  //设置震动
+						else if(USART_RX_BUF[1]==SET_STRENGTH){  //设置强度
 						             strengthflag = USART_RX_BUF[3];
 								if(strengthflag==0){
-									SHOW4=UI_NONE;
+									
 								}
 								else if(strengthflag==1){
-									SHOW4=UI_L1;
+									
 								}
 								else if(strengthflag==2){
-									SHOW4=UI_L2;
+									
 								}
 								else if(strengthflag==3){
-									SHOW4=UI_L3;
+									
 								}
                                           		t_data.len=0;
   								t_data.buf[t_data.len++]= strengthflag;
