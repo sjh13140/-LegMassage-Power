@@ -14,10 +14,10 @@ sbit CLK=P1^5;
 typedef struct AIP1642_TAG{
   u8 pos;                        
   u8 n;   
-  u8 buf[4];           
+  u8 buf[2];           
 }AIP1642_T;
 
-u8  code table[]={0x00,0x01,0x02,0x04,0x08,0x10,0x03};	
+u8  code table[]={0x00,0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};	
 AIP1642_T t_aip1642;
 
 void ct1642_gpio_init(void)
@@ -89,14 +89,13 @@ void aip1642_process(void)
 {
 		 ct1642_send_data( table[t_aip1642.buf[t_aip1642.pos]],t_aip1642.pos);
 		t_aip1642.pos++;
-		if(t_aip1642.pos>3)t_aip1642.pos=0;
+		if(t_aip1642.pos>1)t_aip1642.pos=0;
 }
 
 
-void show_aip1642(u8 para1,u8 para2,u8 para3,u8 para4)
+void show_aip1642(u8 para1,u8 para2)
 {
 	t_aip1642.buf[0]=para1;
 	t_aip1642.buf[1]=para2;
-	t_aip1642.buf[2]=para3;
-	t_aip1642.buf[3]=para4;
+
 }

@@ -259,23 +259,20 @@ u8 xdata hotflag=0;
 
 u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
-u8 xdata SHOW3=UI_NONE;
-u8 xdata SHOW4=UI_NONE;
+
 //u8 xdata dir;
 //u8 xdata cnt;
 //u8 xdata twogasbagrun;
 //u8 xdata databuf[10];
 u8 xdata strengthflag=1;
-u8 xdata strengthpara=1;
+//u8 xdata strengthpara=1;
 u32 xdata stoptime;
-u8 xdata stopflag;
+//u8 xdata stopflag;
 u8 xdata again=0;
-void ui_show(u8 para1,u8 para2,u8 para3,u8 para4)
+void ui_show(u8 para1,u8 para2)
 {
 	SHOW1=para1;
 	SHOW2=para2;
-	SHOW3=para3;
-	SHOW4=para4;
 }
 void pushlongdata(u8 a,u8 *buf,u8 len) 
 {
@@ -376,9 +373,10 @@ void mode_process()
 		//t_mode.p = 0;
 		break;
 	}
+		strengthflag = 2;
 		feethot = tempL3;
 		kneehot=tempL3;
-				hotflag=5;
+		hotflag=5;
 		kneelast = kneehot;
 		feetlast = feethot;
 		again=0;
@@ -575,7 +573,7 @@ u8 key_scan(void)
 void key_process(void)
 {
   u8 key;
-  u8 i;
+//  u8 i;
 	key = key_scan();
 	if(key==0)return;
 	if(key==KEY1SHORT){  //自动
@@ -585,13 +583,12 @@ void key_process(void)
 
 	}
 	else if(key==KEY2SHORT){//局部
-			if(mode<=5)mode=6;
+		if(mode<=5)mode=6;
 		else {
                      mode++;
 			if(mode>8)mode=6;
 		}
 		mode_process();
-
 	}
 	else if(key==KEY3LONG){  //开关
 					if(runstate==0){
@@ -612,7 +609,7 @@ void key_process(void)
 			runstate=2;
 		 t_mode.temptime = get_stepsec();	
  		stoptime=getsystimes();
-		stopflag=0;
+		//stopflag=0;
 		}
 		else if(runstate==2){
 			runstate = 1;
@@ -637,8 +634,11 @@ void key_process(void)
 			feethot=0;
 		}
 	}
-	if(runstate==0)ui_show(0,0, 0, 0);
-	else if(runstate==1)ui_show((mode<6?mode:0),(mode>5?mode-5:0), strengthflag, runstate+hotflag);
+	//if(runstate==0)ui_show(0,0, 0, 0);
+	//else if(runstate==1)ui_show((mode<6?mode:0),(mode>5?mode-5:0), strengthflag, runstate+hotflag);
+	ui_show(mode,strengthflag); 
+	POWERLED=runstate;
+	HEATLED=hotflag;
 }
 
 
@@ -888,7 +888,7 @@ void control_process(void)
 		PUMP=0;
 		valve_process(0,0,0,0); 
 		step=0xff;
-		ui_show(0, 0, 0, 0);
+		ui_show(0, 0);
 		FOOTHEAT(0);
 		KNEEHEAT(0);
 	}
@@ -990,16 +990,19 @@ void control_process(void)
                  PUMP=0;
 		FOOTHEAT(0);
 		KNEEHEAT(0);
+		ui_show(0, 0);
+		HEATLED=0;
 		if(getsystimes()-stoptime>=500){
 			stoptime=getsystimes();
-			if(stopflag==0){ 
-				stopflag=1;
-				ui_show(0, 0, 0, 1);
-				}
-			else {
-					stopflag=0;
-				ui_show(0, 0, 0, 0);
-			}
+			POWERLED=~POWERLED;
+//			if(stopflag==0){ 
+//				stopflag=1;
+//				//ui_show(0, 0, 0, 1);
+//				}
+//			else {
+//					stopflag=0;
+//				//ui_show(0, 0, 0, 0);
+//			}
 		}		
 	}
 
@@ -1063,20 +1066,20 @@ void main(void)
 	VALVE2=0;
 	VALVE3=0;
 	VALVE4=0;
-	ui_show(0,0, 0, 0);
+	//ui_show(0,0, 0, 0);
+		//ui_show(mode,strengthflag, 0, 0);  POWERLED=runstate;HEATLED=hotflag;
 	wdg_init();
   while(1)
 	{
-
 		//按键设置处理
 		key_process();
 //		//蓝牙接收处理
-		//ble_process();
+		ble_process();
 
 //		//输出控制
-		control_process();
+	control_process();
 //		数码管显示
-       	show_aip1642(SHOW1,SHOW2,SHOW3,SHOW4);
+       	show_aip1642(SHOW1,SHOW2);
 //		运行定时
 //		alarmtime_process();
 		cleardog(1);

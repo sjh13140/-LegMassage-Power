@@ -6,6 +6,12 @@
 void gpio_output_init()
 {
   //p05
+ 	  P0OE = (P0OE&~P0OE_P0OE0_MASK)|1<<P0OE_P0OE0_POS;          //VALVE1
+	P0_0 = 0;//输出高	
+ 	 P0OE = (P0OE&~P0OE_P0OE1_MASK)|1<<P0OE_P0OE1_POS;            //VALVE2
+	P0_1 = 0;//输出高
+
+ 
  	  P0OE = (P0OE&~P0OE_P0OE4_MASK)|1<<P0OE_P0OE4_POS;          //VALVE1
 	P0_4 = 0;//输出高	
  	 P0OE = (P0OE&~P0OE_P0OE5_MASK)|1<<P0OE_P0OE5_POS;            //VALVE2
