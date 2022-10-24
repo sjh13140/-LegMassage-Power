@@ -19,92 +19,92 @@
 
 #define KEYTIME 1000
 
-#define foot_gogas_L1 10
-#define foot_gogas_L2 15
-#define foot_gogas_L3 20
-#define foot_gogas_L4 25
+#define foot_gogas_L1 7                                      /*    ½Åµ×    */
+#define foot_gogas_L2 10
+#define foot_gogas_L3 15
+#define foot_gogas_L4 17
 
-#define foot_again_gogas_L1 5
+#define foot_again_gogas_L1 5                            /*    ½Åµ×Ð¹Æøºó³äÆø    */
 #define foot_again_gogas_L2 10
 #define foot_again_gogas_L3 15
 #define foot_again_gogas_L4 20
 
-#define ankle_gogas_L1 10
-#define ankle_gogas_L2 15
-#define ankle_gogas_L3 20
-#define ankle_gogas_L4 25
+#define ankle_gogas_L1 7						   /*    ½Åõ×    */
+#define ankle_gogas_L2 10
+#define ankle_gogas_L3 14
+#define ankle_gogas_L4 17
 
-#define ankle_again_gogas_L1 5
+#define ankle_again_gogas_L1 5				  /*    ½Åõ×Ð¹Æøºó³äÆø    */
 #define ankle_again_gogas_L2 10
 #define ankle_again_gogas_L3 15
 #define ankle_again_gogas_L4 20
 
-#define sleg_gogas_L1 10
-#define sleg_gogas_L2 15
-#define sleg_gogas_L3 20
-#define sleg_gogas_L4 25
+#define sleg_gogas_L1 11						 /*   Ð¡ÍÈ    */
+#define sleg_gogas_L2 23
+#define sleg_gogas_L3 26
+#define sleg_gogas_L4 28
 
-#define sleg_again_gogas_L1 5
+#define sleg_again_gogas_L1 5				 /*    Ð¡ÍÈ   Ð¹Æøºó³äÆø    */
 #define sleg_again_gogas_L2 10
 #define sleg_again_gogas_L3 15
 #define sleg_again_gogas_L4 20
 
-#define bleg_gogas_L1 10
-#define bleg_gogas_L2 15
-#define bleg_gogas_L3 20
-#define bleg_gogas_L4 25
+#define bleg_gogas_L1 15						 /*   ´óÍÈ    */
+#define bleg_gogas_L2 19
+#define bleg_gogas_L3 22
+#define bleg_gogas_L4 26
 
-#define bleg_again_gogas_L1 5
+#define bleg_again_gogas_L1 5				 /*    ´óÍÈ   Ð¹Æøºó³äÆø    */
 #define bleg_again_gogas_L2 10
 #define bleg_again_gogas_L3 15
 #define bleg_again_gogas_L4 20
 
-#define foot_ankle_gogas_L1 10
-#define foot_ankle_gogas_L2 15
-#define foot_ankle_gogas_L3 20
-#define foot_ankle_gogas_L4 25
+#define foot_ankle_gogas_L1 11				/*    ½Åµ×   ½Åõ× */
+#define foot_ankle_gogas_L2 17
+#define foot_ankle_gogas_L3 21
+#define foot_ankle_gogas_L4 23
 
-#define foot_sleg_gogas_L1 10
-#define foot_sleg_gogas_L2 15
-#define foot_sleg_gogas_L3 20
-#define foot_sleg_gogas_L4 25
+#define foot_sleg_gogas_L1 18				/*    ½Åµ×   Ð¡ÍÈ */
+#define foot_sleg_gogas_L2 20
+#define foot_sleg_gogas_L3 22
+#define foot_sleg_gogas_L4 26
 
-#define foot_bleg_gogas_L1 10
-#define foot_bleg_gogas_L2 15
-#define foot_bleg_gogas_L3 20
-#define foot_bleg_gogas_L4 25
+#define foot_bleg_gogas_L1 17				/*    ½Åµ×   ´óÍÈ */
+#define foot_bleg_gogas_L2 27
+#define foot_bleg_gogas_L3 32
+#define foot_bleg_gogas_L4 34
 
-#define ankle_sleg_gogas_L1 10
-#define ankle_sleg_gogas_L2 15
+#define ankle_sleg_gogas_L1 11				   /*    ½Åõ×   Ð¡ÍÈ   */
+#define ankle_sleg_gogas_L2 16
 #define ankle_sleg_gogas_L3 20
-#define ankle_sleg_gogas_L4 25
+#define ankle_sleg_gogas_L4 23
 
-#define ankle_bleg_gogas_L1 10
-#define ankle_bleg_gogas_L2 15
-#define ankle_bleg_gogas_L3 20
-#define ankle_bleg_gogas_L4 25
+#define ankle_bleg_gogas_L1 18				  /*    ½Åõ×    ´óÍÈ   */
+#define ankle_bleg_gogas_L2 27
+#define ankle_bleg_gogas_L3 35
+#define ankle_bleg_gogas_L4 40
 
-#define sleg_bleg_gogas_L1 10
-#define sleg_bleg_gogas_L2 15
-#define sleg_bleg_gogas_L3 20
-#define sleg_bleg_gogas_L4 25
+#define sleg_bleg_gogas_L1 21				 /*   Ð¡ÍÈ   ´óÍÈ     */
+#define sleg_bleg_gogas_L2 27
+#define sleg_bleg_gogas_L3 36
+#define sleg_bleg_gogas_L4 41
 
 #define foot_ankle_sleg_gogas_L1 10
 #define foot_ankle_sleg_gogas_L2 15
 #define foot_ankle_sleg_gogas_L3 20
 #define foot_ankle_sleg_gogas_L4 25
 
-#define foot_ankle_sleg_bleg_gogas_L1 10
-#define foot_ankle_sleg_bleg_gogas_L2 15
-#define foot_ankle_sleg_bleg_gogas_L3 20
-#define foot_ankle_sleg_bleg_gogas_L4 25
+#define foot_ankle_sleg_bleg_gogas_L1 23       /*    ½Åµ×   ½Åõ×Ð¡ÍÈ   ´óÍÈ*/
+#define foot_ankle_sleg_bleg_gogas_L2 35
+#define foot_ankle_sleg_bleg_gogas_L3 40
+#define foot_ankle_sleg_bleg_gogas_L4 47
 
-#define foot_ankle_sleg_bleg_again_gogas_L1 5
+#define foot_ankle_sleg_bleg_again_gogas_L1 5      	/*    ½Åµ×   ½Åõ×Ð¡ÍÈ   ´óÍÈÐ¹Æøºó¶þ´Î³äÆø*/
 #define foot_ankle_sleg_bleg_again_gogas_L2 10
 #define foot_ankle_sleg_bleg_again_gogas_L3 15
 #define foot_ankle_sleg_bleg_again_gogas_L4 20
 
-#define foot_ankle_sleg_bleg_outgas_L1 4
+#define foot_ankle_sleg_bleg_outgas_L1 4                /*    ½Åµ×   ½Åõ×Ð¡ÍÈ   ´óÍÈÐ¹Æø*/
 #define foot_ankle_sleg_bleg_outgas_L2 4
 #define foot_ankle_sleg_bleg_outgas_L3 4
 #define foot_ankle_sleg_bleg_outgas_L4 4
@@ -995,14 +995,6 @@ void control_process(void)
 		if(getsystimes()-stoptime>=500){
 			stoptime=getsystimes();
 			POWERLED=~POWERLED;
-//			if(stopflag==0){ 
-//				stopflag=1;
-//				//ui_show(0, 0, 0, 1);
-//				}
-//			else {
-//					stopflag=0;
-//				//ui_show(0, 0, 0, 0);
-//			}
 		}		
 	}
 

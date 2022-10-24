@@ -3,11 +3,11 @@
 #include "config.h"
 
 #define PUMP  	P1_1
-#define VALVE1   P0_4 //上  
-#define VALVE2   P0_5  //下
-#define VALVE3   P0_6 //上  
-#define VALVE4   P0_7  //下
-#define POWERLED   P0_1 //上  
-#define HEATLED   P0_0  //下
+#define VALVE1   P0_5 //脚底
+#define VALVE2   P0_6  //脚踝
+#define VALVE3   P0_4 //小腿  
+#define VALVE4   P0_7  //大腿
+#define POWERLED   P0_1 //电源指示灯
+#define HEATLED   P0_0  //加热指示灯
 void gpio_output_init();
 #endif
