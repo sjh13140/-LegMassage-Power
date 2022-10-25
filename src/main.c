@@ -114,19 +114,19 @@
 #define tempL2 230
 #define tempL1 200
 u8 code gastime[13][5]={
-	{0,foot_gogas_L1, foot_gogas_L2, foot_gogas_L3, foot_gogas_L4},
-	{0,ankle_gogas_L1, ankle_gogas_L2, ankle_gogas_L3, ankle_gogas_L4},
-	{0,sleg_gogas_L1, sleg_gogas_L2, sleg_gogas_L3, sleg_gogas_L4},
-	{0,bleg_gogas_L1, bleg_gogas_L2, bleg_gogas_L3,bleg_gogas_L4},
-	{0,foot_ankle_gogas_L1, foot_ankle_gogas_L2, foot_ankle_gogas_L3, foot_ankle_gogas_L4},
-	{0,foot_sleg_gogas_L1,  foot_sleg_gogas_L2,  foot_sleg_gogas_L3,  foot_sleg_gogas_L4},
-	{0,foot_bleg_gogas_L1, foot_bleg_gogas_L2, foot_bleg_gogas_L3,foot_bleg_gogas_L4},
-	{0,ankle_sleg_gogas_L1, ankle_sleg_gogas_L2, ankle_sleg_gogas_L3, ankle_sleg_gogas_L4},
-	{0,ankle_bleg_gogas_L1, ankle_bleg_gogas_L2, ankle_bleg_gogas_L3, ankle_bleg_gogas_L4},
-	{0,sleg_bleg_gogas_L1, sleg_bleg_gogas_L2, sleg_bleg_gogas_L3, sleg_bleg_gogas_L4},
-	{0,foot_ankle_sleg_gogas_L1, foot_ankle_sleg_gogas_L2, foot_ankle_sleg_gogas_L3, foot_ankle_sleg_gogas_L4},
-	{0,foot_ankle_sleg_bleg_gogas_L1, foot_ankle_sleg_bleg_gogas_L2, foot_ankle_sleg_bleg_gogas_L3, foot_ankle_sleg_bleg_gogas_L4},
-	{0,foot_ankle_sleg_bleg_outgas_L1, foot_ankle_sleg_bleg_outgas_L2, foot_ankle_sleg_bleg_outgas_L3, foot_ankle_sleg_bleg_outgas_L4}	
+	{0,foot_gogas_L1, foot_gogas_L2, foot_gogas_L3, foot_gogas_L4},                //0
+	{1,ankle_gogas_L1, ankle_gogas_L2, ankle_gogas_L3, ankle_gogas_L4},
+	{2,sleg_gogas_L1, sleg_gogas_L2, sleg_gogas_L3, sleg_gogas_L4},
+	{3,bleg_gogas_L1, bleg_gogas_L2, bleg_gogas_L3,bleg_gogas_L4},
+	{4,foot_ankle_gogas_L1, foot_ankle_gogas_L2, foot_ankle_gogas_L3, foot_ankle_gogas_L4},
+	{5,foot_sleg_gogas_L1,  foot_sleg_gogas_L2,  foot_sleg_gogas_L3,  foot_sleg_gogas_L4},
+	{6,foot_bleg_gogas_L1, foot_bleg_gogas_L2, foot_bleg_gogas_L3,foot_bleg_gogas_L4},
+	{7,ankle_sleg_gogas_L1, ankle_sleg_gogas_L2, ankle_sleg_gogas_L3, ankle_sleg_gogas_L4},
+	{8,ankle_bleg_gogas_L1, ankle_bleg_gogas_L2, ankle_bleg_gogas_L3, ankle_bleg_gogas_L4},
+	{9,sleg_bleg_gogas_L1, sleg_bleg_gogas_L2, sleg_bleg_gogas_L3, sleg_bleg_gogas_L4},
+	{10,foot_ankle_sleg_gogas_L1, foot_ankle_sleg_gogas_L2, foot_ankle_sleg_gogas_L3, foot_ankle_sleg_gogas_L4},
+	{11,foot_ankle_sleg_bleg_gogas_L1, foot_ankle_sleg_bleg_gogas_L2, foot_ankle_sleg_bleg_gogas_L3, foot_ankle_sleg_bleg_gogas_L4},     //11
+	{12,foot_ankle_sleg_bleg_outgas_L1, foot_ankle_sleg_bleg_outgas_L2, foot_ankle_sleg_bleg_outgas_L3, foot_ankle_sleg_bleg_outgas_L4}	//  12
 };
 u8 code agastime[13][5]={
 	{0,foot_again_gogas_L1, foot_again_gogas_L2, foot_again_gogas_L3, foot_again_gogas_L4},
@@ -196,8 +196,10 @@ typedef enum TIME_ENUM{
 	  SET_LOVEMODE,
 	  GET_LOVEMODE,
 	  CLR_LOVEMODE,
-	  SET_HEAT,
-	  GET_HEAT,
+	  SET_FOOTHOT,
+	  GET_FOOTHOT,
+	  SET_KNEEHOT,
+	  GET_KNEEHOT,
 	  SET_STRENGTH,
 	  GET_STRENGTH,
 	  SET_RUNTIME,
@@ -206,23 +208,24 @@ typedef enum TIME_ENUM{
 	  RST_SYS,
 	  GET_VER,
 	  GET_ALLSTATE,
+	  SET_CUSTOM,
 	  ERR_DATA=0XEF
 }TIME_E;
 
 typedef enum BODY_ENUM{
-	FOOT,
-	ANKLE,
-	SLEG,
-	BLEG,
-	FOOT_ANKLE,
-	FOOT_SLEG,
-	FOOT_BLEG,
-	ANKLE_SLEG,
-	ANKLE_BLEG,
-	SLEG_BLEG,
-	FOOT_ANKLE_SLEG,
-	FOOT_ANKLE_SLEG_BLEG,
-	ALL_OUTGAS
+	FOOT,                                       //   0 
+	ANKLE,                                     //   1
+	SLEG,                                       //   2
+	BLEG,                                       //   3
+	FOOT_ANKLE,                          //   4
+	FOOT_SLEG,                            //   5
+	FOOT_BLEG,					 //   6
+	ANKLE_SLEG,				 //   7
+	ANKLE_BLEG,				 //   8
+	SLEG_BLEG,					 //   9
+	FOOT_ANKLE_SLEG,			 //   10
+	FOOT_ANKLE_SLEG_BLEG,		 //   11
+	ALL_OUTGAS					 //   12
 }BODY_E;
 
 
@@ -269,6 +272,7 @@ u8 xdata strengthflag=1;
 u32 xdata stoptime;
 //u8 xdata stopflag;
 u8 xdata again=0;
+u8 xdata custombuf[10]={0,1,2,3,4,7,9,5,8,6};
 void ui_show(u8 para1,u8 para2)
 {
 	SHOW1=para1;
@@ -312,6 +316,7 @@ void heat_process(u8 para1,u8 para2)
 }
 void mode_process()
 {
+u8 i;
 	switch(mode){
 	case 1:
 		t_mode.buf[0] = FOOT;
@@ -351,6 +356,9 @@ void mode_process()
 		//t_mode.p = 0;
 		break;
 	case 5:
+		for(i=0;i<10;i++)
+		t_mode.buf[i]=custombuf[i];
+		t_mode.num = 10;
 		break;
 	case 6:
 		t_mode.buf[0]=FOOT;
@@ -374,9 +382,9 @@ void mode_process()
 		break;
 	}
 		strengthflag = 2;
-		feethot = tempL3;
-		kneehot=tempL3;
-		hotflag=5;
+		feethot = tempL2;
+		kneehot=tempL2;
+		hotflag=2;
 		kneelast = kneehot;
 		feetlast = feethot;
 		again=0;
@@ -669,8 +677,9 @@ void ble_process(void)
 									firsttime = get_alarmsec();
 									runstate=USART_RX_BUF[3];
 									mode = 1;
-									if(step!=t_mode.buf[0])clear_stepsec();
-									t_mode.p=0;
+									mode_process();
+//									if(step!=t_mode.buf[0])clear_stepsec();
+//									t_mode.p=0;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=runstate;
 									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -690,9 +699,9 @@ void ble_process(void)
 									firsttime = get_alarmsec();
 									runstate=1;
 									mode=USART_RX_BUF[3];
-									
-									if(step!=t_mode.buf[0])clear_stepsec();
-									t_mode.p=0;
+									mode_process();
+//									if(step!=t_mode.buf[0])clear_stepsec();
+//									t_mode.p=0;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=runstate;
 									t_data.buf[t_data.len++]=mode;
@@ -737,50 +746,82 @@ void ble_process(void)
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(CLR_LOVEMODE,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==SET_HEAT){  //设置加热
+						else if(USART_RX_BUF[1]==SET_FOOTHOT){  //设置加热
 						             hotflag = USART_RX_BUF[3];
 								if(hotflag==0) {
-								
+									feethot = 0;
 								}
-								else if(hotflag==128){
-								
+								else if(hotflag==1){
+									feethot = tempL1;
 
 								}
-								else if(hotflag==255){
-								
+								else if(hotflag==2){
+								feethot = tempL2;
+
+								}
+								else if(hotflag==3){
+								feethot = tempL3;
 
 								}
                                           			t_data.len=0;
   								t_data.buf[t_data.len++]= hotflag;
   								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(SET_HEAT,t_data.buf,t_data.len);
+  								pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==GET_HEAT){  //获取获取加热状态
+						else if(USART_RX_BUF[1]==GET_FOOTHOT){  //获取获取加热状态
                                           						t_data.len=0;
 								t_data.buf[t_data.len++]= hotflag;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_HEAT,t_data.buf,t_data.len);
+								pushlongdata(GET_FOOTHOT,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==SET_KNEEHOT){  //设置加热
+						             hotflag = USART_RX_BUF[3];
+								if(hotflag==0) {
+									kneehot = 0;
+								}
+								else if(hotflag==1){
+									kneehot =tempL1;
+
+								}
+								else if(hotflag==2){
+								kneehot = tempL2;
+
+								}
+								else if(hotflag==3){
+								kneehot =tempL3;
+
+								}
+                                          			t_data.len=0;
+  								t_data.buf[t_data.len++]= hotflag;
+  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
+						}
+						else if(USART_RX_BUF[1]==GET_KNEEHOT){  //获取获取加热状态
+                                          						t_data.len=0;
+								t_data.buf[t_data.len++]= hotflag;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(GET_KNEEHOT,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_STRENGTH){  //设置强度
 						             strengthflag = USART_RX_BUF[3];
-								if(strengthflag==0){
-									
-								}
-								else if(strengthflag==1){
-									
-								}
-								else if(strengthflag==2){
-									
-								}
-								else if(strengthflag==3){
-									
-								}
+//								if(strengthflag==0){
+//									
+//								}
+//								else if(strengthflag==1){
+//									
+//								}
+//								else if(strengthflag==2){
+//									
+//								}
+//								else if(strengthflag==3){
+//									
+//								}
                                           		t_data.len=0;
   								t_data.buf[t_data.len++]= strengthflag;
   								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(SET_STRENGTH,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==GET_STRENGTH){  //获取震动状态
+						else if(USART_RX_BUF[1]==GET_STRENGTH){  //获取强度状态
                                						t_data.len=0;
 								t_data.buf[t_data.len++]= strengthflag;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -832,7 +873,7 @@ void ble_process(void)
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==GET_ALLSTATE){  //获取多种状态
+						else if(USART_RX_BUF[1]==GET_ALLSTATE){  //获取多种状态 
                                                     	t_data.len=0;
 								t_data.buf[t_data.len++]= runstate;
 								t_data.buf[t_data.len++]= mode;
@@ -843,9 +884,21 @@ void ble_process(void)
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);
 						}
+						else if(USART_RX_BUF[1]==SET_CUSTOM){
+							for(i=0;i<10;i++) {
+								t_mode.buf[i] = USART_RX_BUF[3+i];
+								t_mode.num=10;
+							}
+								t_data.len=0;
+								t_data.buf[t_data.len++]= 1;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
+						}
 						for(i=0;i< USART_RX_STA;i++)USART_RX_BUF[i]=0;
 						USART_RX_STA=0;
-						
+							ui_show(mode,strengthflag); 
+	POWERLED=runstate;
+	HEATLED=hotflag;
 					}
 					else{  //校验和不对
 							temp=0;
@@ -886,6 +939,8 @@ void control_process(void)
 {
 	if(runstate==0){   //关机
 		PUMP=0;
+		HEATLED=0;
+		POWERLED=0;
 		valve_process(0,0,0,0); 
 		step=0xff;
 		ui_show(0, 0);
@@ -895,9 +950,28 @@ void control_process(void)
 	else if(runstate==1){  //开机
 		FOOTHEAT(feethot);
 		KNEEHEAT(kneehot);
+		
 		if(again==0){
-		t_mode.time = gastime[step][strengthflag];}
-		else { t_mode.time = agastime[step][strengthflag];}
+			if(mode==2||mode==3||mode==5) {
+				if(step==4||step==5||step==7) {
+					t_mode.time = gastime[step][strengthflag]-4;
+				}
+				else if(step==6||step==8||step==9){
+					t_mode.time = gastime[step][strengthflag]-7;
+
+				}
+				else {
+					t_mode.time = gastime[step][strengthflag];
+				}	
+			}
+			else {
+				t_mode.time = gastime[step][strengthflag];
+			}
+		}
+		else { 
+			//t_mode.time = agastime[step][strengthflag];
+			t_mode.time = gastime[step][strengthflag]-4;
+		}
 		if(get_stepsec()==t_mode.time){
 			clear_stepsec();
 			t_mode.p++;
@@ -1069,7 +1143,7 @@ void main(void)
 		ble_process();
 
 //		//输出控制
-	control_process();
+		control_process();
 //		数码管显示
        	show_aip1642(SHOW1,SHOW2);
 //		运行定时

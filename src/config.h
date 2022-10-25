@@ -4,7 +4,7 @@
 #include "tm52fn8276_bsp.h"
 #include <intrins.h>
 #include <stdio.h>
-#define headpara 0x02
+#define headpara 0x03
 #define endpara 0xff
 #define codeverion 0x01
 typedef unsigned char u8;
