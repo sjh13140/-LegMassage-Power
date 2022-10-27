@@ -901,20 +901,33 @@ void ble_process(void)
 								pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_CUSTOM){
-							for(i=0;i<10;i++) {
+							if(mode==5){
+								for(i=0;i<10;i++) {
 								t_mode.buf[i] = USART_RX_BUF[3+i];
+								custombuf[i]= USART_RX_BUF[3+i];
+
+								}
 								t_mode.num=10;
-							}
+								if(step!=t_mode.buf[0])clear_stepsec();
+								t_mode.p=0;
+								step=t_mode.buf[t_mode.p];							
 								t_data.len=0;
 								t_data.buf[t_data.len++]= 1;
 								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
+							}else {
+								t_data.len=0;
+								t_data.buf[t_data.len++]= 0;
+								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
+
+							}
 						}
 						for(i=0;i< USART_RX_STA;i++)USART_RX_BUF[i]=0;
 						USART_RX_STA=0;
 							ui_show(mode,strengthflag); 
-	POWERLED=runstate;
-	HEATLED=hotflag;
+							POWERLED=runstate;
+							HEATLED=hotflag;
 					}
 					else{  //校验和不对
 							temp=0;
