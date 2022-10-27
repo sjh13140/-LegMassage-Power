@@ -316,7 +316,7 @@ void heat_process(u8 para1,u8 para2)
 }
 void mode_process()
 {
-u8 i;
+	u8 i;
 	switch(mode){
 	case 1:
 		t_mode.buf[0] = FOOT;
@@ -390,6 +390,22 @@ u8 i;
 		again=0;
 		if(step!=t_mode.buf[0])clear_stepsec();
 		t_mode.p=0;
+		step=t_mode.buf[t_mode.p];
+//		if(mode==2||mode==3||mode==5) {
+//			if(step==4||step==5||step==7) {
+//				t_mode.time = gastime[step][strengthflag]-4;
+//			}
+//			else if(step==6||step==8||step==9){
+//				t_mode.time = gastime[step][strengthflag]-7;
+
+//			}
+//			else if(step==0||step==1||step==2||step==3){
+//				t_mode.time = gastime[step][strengthflag];
+//			}	
+//		}   
+//		else {  //MODE = 1 4 6 7 8
+//			t_mode.time = gastime[step][strengthflag];  //  10
+//		}
 }
 
 
@@ -950,7 +966,6 @@ void control_process(void)
 	else if(runstate==1){  //开机
 		FOOTHEAT(feethot);
 		KNEEHEAT(kneehot);
-		
 		if(again==0){
 			if(mode==2||mode==3||mode==5) {
 				if(step==4||step==5||step==7) {
@@ -960,24 +975,27 @@ void control_process(void)
 					t_mode.time = gastime[step][strengthflag]-7;
 
 				}
-				else {
+				else if(step==0||step==1||step==2||step==3){
 					t_mode.time = gastime[step][strengthflag];
 				}	
-			}
-			else {
-				t_mode.time = gastime[step][strengthflag];
+			}   
+			else {  //MODE = 1 4 6 7 8
+				t_mode.time = gastime[step][strengthflag];  //  10
 			}
 		}
-		else { 
+		else {    //again =1
 			//t_mode.time = agastime[step][strengthflag];
-			t_mode.time = gastime[step][strengthflag]-4;
-		}
-		if(get_stepsec()==t_mode.time){
-			clear_stepsec();
-			t_mode.p++;
+			if(step==12)  t_mode.time = gastime[step][strengthflag];
+			else t_mode.time = gastime[step][strengthflag]-4;   //整体打气时间减4s
+		}		
+
+		if(get_stepsec()>=t_mode.time){  //  大于10
+			clear_stepsec();  //0
+			t_mode.p++; //  1
 			if(t_mode.p>=t_mode.num)t_mode.p=0;
 		}
-		step = t_mode.buf[t_mode.p];
+		step = t_mode.buf[t_mode.p];  //  12   
+
            switch(step)
            	{
               case FOOT:           //脚底
