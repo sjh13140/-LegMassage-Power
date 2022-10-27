@@ -5,5 +5,5 @@
 	<DllName>SampTarg</DllName>
 	<OutFileName>main</OutFileName>
 	<OutFolderName>.\obj\</OutFolderName>
-	<DllFolderPath>D:\Keil_v5\</DllFolderPath>
+	<DllFolderPath>C:\Keil_v5\</DllFolderPath>
 </CallKeilDll>
