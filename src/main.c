@@ -621,7 +621,7 @@ void key_process(void)
 						mode_process();
 	
 					}
-					else if(runstate==1){
+					else if(runstate==1||runstate==2){
 						runstate=0;
 						hotflag=0;
 						strengthflag=0;
