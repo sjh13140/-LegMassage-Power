@@ -16,7 +16,7 @@
 #include "ct1642.h"
 #include "wdg.h"
 #include "input.h"
-
+#define buflen 7
 #define KEYTIME 1000
 
 #define foot_gogas_L1 7                                      /*    脚底    */
@@ -189,7 +189,7 @@ typedef enum AIP1642_ENUM{
 //}GASAG_T;
 typedef struct DATA_TAG{         
      	u8 len;
-	u8 buf[6];
+	u8 buf[buflen];
 }DATA_T;
 typedef enum TIME_ENUM{
    	SET_RUNSTATE=1,
@@ -261,7 +261,10 @@ u8 xdata kneehot;
 u8 xdata feethot=0; //加热片参数
 u8 xdata kneelast;
 u8 xdata feetlast=0; //加热片参数
-u8 xdata hotflag=0;
+u8 xdata footflag=0;
+u8 xdata kneeflag=0;
+u8 xdata footlastflag=0;
+u8 xdata kneelastflag=0;
 
 u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
@@ -388,7 +391,10 @@ void mode_process()
 		strengthflag = 2;   //力度2档
 		feethot = tempL2;   //温度2档
 		kneehot=tempL2;     //温度2档
-		hotflag=2;  //加热指示灯为2
+		footflag = 2;
+		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 		kneelast = kneehot;   //
 		feetlast = feethot;
 		again=0;  //非充放标志
@@ -586,14 +592,17 @@ u8 key_scan(void)
 void key_process(void)
 {
   u8 key;
-//  u8 i;
+ u8 i;
 	key = key_scan();
 	if(key==0)return;
 	if(key==KEY1SHORT){  //自动
 		mode++;
 		if(mode>5)mode=1;
 		mode_process();
-
+		t_data.len=0;
+		t_data.buf[t_data.len++]=mode;
+		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+		pushlongdata(SET_MODE,t_data.buf,t_data.len);
 	}
 	else if(key==KEY2SHORT){//局部
 		if(mode<=5)mode=6;
@@ -602,21 +611,30 @@ void key_process(void)
 			if(mode>8)mode=6;
 		}
 		mode_process();
+		t_data.len=0;
+		t_data.buf[t_data.len++]=mode;
+		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+		pushlongdata(SET_MODE,t_data.buf,t_data.len);
 	}
 	else if(key==KEY3LONG){  //开关
 					if(runstate==0){
 						runstate=1;
-						mode = 1;
+						mode = modelove;
 						clear_stepsec();  //开机清0 ，不能删除  不然开机后模式1会直接运行脚踝
 						mode_process();
 	
 					}
 					else if(runstate==1||runstate==2){
 						runstate=0;
-						hotflag=0;
+						footflag = 0;
+						kneeflag=0;
 						strengthflag=0;
 						mode=0;
 					}
+					t_data.len=0;
+					t_data.buf[t_data.len++]=runstate;
+					for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+					pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
 	}
 	else if(key==KEY3SHORT){ //开关
 		if(runstate==1){
@@ -629,30 +647,43 @@ void key_process(void)
 			runstate = 1;
 			set_stepsec(t_mode.temptime);
 		}
+		t_data.len=0;
+		t_data.buf[t_data.len++]=runstate;
+		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+		pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
 	}
 	else if(key==KEY4SHORT){   //强度 
 		strengthflag++;
 		if(strengthflag>4)strengthflag=1;
+			t_data.len=0;
+					t_data.buf[t_data.len++]=strengthflag;
+					for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+					pushlongdata(SET_STRENGTH,t_data.buf,t_data.len);
 	}
 	else if(key==KEY5SHORT){  //加热 
-               if(hotflag==0) {
+               if(footflag==0&&kneeflag==0){
+			 footflag = 	footlastflag;
+			kneeflag = kneelastflag ;
 			kneehot=kneelast;   //膝盖加热
 			feethot=feetlast;  //足底加热
-			hotflag=5;     //加热状态
 	        }
 	        else {
-			hotflag=0;
+			footlastflag = footflag ;
+			kneelastflag = kneeflag ;
 			kneelast = kneehot;
 			feetlast = feethot;
+			
 			kneehot=0;
 			feethot=0;
+			footflag =0;
+			kneeflag =0;
 		}
+
 	}
-	//if(runstate==0)ui_show(0,0, 0, 0);
-	//else if(runstate==1)ui_show((mode<6?mode:0),(mode>5?mode-5:0), strengthflag, runstate+hotflag);
+
 	ui_show(mode,strengthflag); 
 	POWERLED=runstate;
-	HEATLED=hotflag;
+	HEATLED=footflag|kneeflag;
 }
 
 
@@ -682,13 +713,11 @@ void ble_process(void)
 									clear_alarmsec();
 									firsttime = get_alarmsec();
 									runstate=USART_RX_BUF[3];
-									mode = 1;
+									mode =modelove;
 									mode_process();
-//									if(step!=t_mode.buf[0])clear_stepsec();
-//									t_mode.p=0;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=runstate;
-									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+									for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 									pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
 		
 							
@@ -696,7 +725,7 @@ void ble_process(void)
 						else if(USART_RX_BUF[1]==GET_RUNSTATE){  //获取运行状态
 								t_data.len=0;
 								t_data.buf[t_data.len++]=runstate;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_RUNSTATE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_MODE)  //模式
@@ -706,12 +735,10 @@ void ble_process(void)
 									runstate=1;
 									mode=USART_RX_BUF[3];
 									mode_process();
-//									if(step!=t_mode.buf[0])clear_stepsec();
-//									t_mode.p=0;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=runstate;
 									t_data.buf[t_data.len++]=mode;
-									for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+									for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 									pushlongdata(SET_MODE,t_data.buf,t_data.len);
 		
 							
@@ -719,7 +746,7 @@ void ble_process(void)
 						else if(USART_RX_BUF[1]==GET_MODE){  //获取模式状态
 								t_data.len=0;
 								t_data.buf[t_data.len++]=mode;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_MODE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_LOVEMODE)  //添加心动模式
@@ -730,7 +757,7 @@ void ble_process(void)
 								iap_eeprom_write(0,eeprombuf,2); 
 								t_data.len=0;
 								t_data.buf[t_data.len++]=modelove;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(SET_LOVEMODE,t_data.buf,t_data.len);
 							 
 						}
@@ -738,7 +765,7 @@ void ble_process(void)
                                                     					t_data.len=0;
 								t_data.buf[t_data.len++]=modelove;
 			
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_LOVEMODE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==CLR_LOVEMODE)  //删除心动模式
@@ -749,96 +776,84 @@ void ble_process(void)
 								iap_eeprom_write(0,eeprombuf,2); 
 								t_data.len=0;
 								t_data.buf[t_data.len++]=modelove;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(CLR_LOVEMODE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_FOOTHOT){  //设置加热
-						             hotflag = USART_RX_BUF[3];
-								if(hotflag==0) {
+						             footflag = USART_RX_BUF[3];
+								if(footflag==0) {
 									feethot = 0;
 								}
-								else if(hotflag==1){
+								else if(footflag==1){
 									feethot = tempL1;
 
 								}
-								else if(hotflag==2){
+								else if(footflag==2){
 								feethot = tempL2;
 
 								}
-								else if(hotflag==3){
+								else if(footflag==3){
 								feethot = tempL3;
 
 								}
                                           			t_data.len=0;
-  								t_data.buf[t_data.len++]= hotflag;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								t_data.buf[t_data.len++]= footflag;
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_FOOTHOT){  //获取获取加热状态
                                           						t_data.len=0;
-								t_data.buf[t_data.len++]= hotflag;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								t_data.buf[t_data.len++]= footflag;
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_FOOTHOT,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_KNEEHOT){  //设置加热
-						             hotflag = USART_RX_BUF[3];
-								if(hotflag==0) {
+						             kneeflag = USART_RX_BUF[3];
+								if(kneeflag==0) {
 									kneehot = 0;
 								}
-								else if(hotflag==1){
+								else if(kneeflag==1){
 									kneehot =tempL1;
 
 								}
-								else if(hotflag==2){
+								else if(kneeflag==2){
 								kneehot = tempL2;
 
 								}
-								else if(hotflag==3){
+								else if(kneeflag==3){
 								kneehot =tempL3;
 
 								}
                                           			t_data.len=0;
-  								t_data.buf[t_data.len++]= hotflag;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								t_data.buf[t_data.len++]= kneeflag;
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_KNEEHOT){  //获取获取加热状态
-                                          						t_data.len=0;
-								t_data.buf[t_data.len++]= hotflag;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+                                          		t_data.len=0;
+								t_data.buf[t_data.len++]= kneeflag;
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_KNEEHOT,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_STRENGTH){  //设置强度
 						             strengthflag = USART_RX_BUF[3];
-//								if(strengthflag==0){
-//									
-//								}
-//								else if(strengthflag==1){
-//									
-//								}
-//								else if(strengthflag==2){
-//									
-//								}
-//								else if(strengthflag==3){
-//									
-//								}
                                           		t_data.len=0;
   								t_data.buf[t_data.len++]= strengthflag;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(SET_STRENGTH,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_STRENGTH){  //获取强度状态
                                						t_data.len=0;
 								t_data.buf[t_data.len++]= strengthflag;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_STRENGTH,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_RUNTIME)  //定时设置
 						{
 
 						                       clear_alarmsec();
-											   firsttime=0;
-											   alarmflag = USART_RX_BUF[3];
+									   firsttime=0;
+									   alarmflag = USART_RX_BUF[3];
 									if(alarmflag==1)  alarmtime = 5;
 									else if(alarmflag==2) alarmtime = 10; 
 									else if(alarmflag==3) alarmtime = 15;
@@ -847,14 +862,14 @@ void ble_process(void)
 									else if(alarmflag==6)  alarmtime = 30;
 									t_data.len=0;
 								t_data.buf[t_data.len++]=alarmflag;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
 									
 						}
 						else if(USART_RX_BUF[1]==GET_RUNTIME){  //获取定时值
 								t_data.len=0;
 								t_data.buf[t_data.len++]=alarmflag;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_RUNSTAMP)  //获取时间戳
@@ -863,20 +878,20 @@ void ble_process(void)
                         					t_data.len=0;
 								t_data.buf[t_data.len++]=get_alarmsec()/256;
 								t_data.buf[t_data.len++]=get_alarmsec()%256;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_RUNSTAMP,t_data.buf,t_data.len);	    						
 						}
 						else if(USART_RX_BUF[1]==RST_SYS){  //重启
 								t_data.len=0;
 								t_data.buf[t_data.len++]=0x01;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 							   while(1);
 						}
 						else if(USART_RX_BUF[1]==GET_VER){  //获取程序版本
 								t_data.len=0;
 								t_data.buf[t_data.len++]= codeverion;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==GET_ALLSTATE){  //获取多种状态 
@@ -886,8 +901,9 @@ void ble_process(void)
 								t_data.buf[t_data.len++]= modelove;
 								t_data.buf[t_data.len++]= alarmflag;
 								t_data.buf[t_data.len++]= strengthflag;
-								t_data.buf[t_data.len++]= hotflag;								
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								t_data.buf[t_data.len++]= footflag;	
+								t_data.buf[t_data.len++]= kneeflag;
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_CUSTOM){
@@ -903,12 +919,12 @@ void ble_process(void)
 								step=t_mode.buf[t_mode.p];							
 								t_data.len=0;
 								t_data.buf[t_data.len++]= 1;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
 							}else {
 								t_data.len=0;
 								t_data.buf[t_data.len++]= 0;
-								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
 
 							}
@@ -917,7 +933,7 @@ void ble_process(void)
 						USART_RX_STA=0;
 							ui_show(mode,strengthflag); 
 							POWERLED=runstate;
-							HEATLED=hotflag;
+							HEATLED=(footflag|kneeflag);
 					}
 					else{  //校验和不对
 							temp=0;
@@ -925,7 +941,7 @@ void ble_process(void)
 							USART_RX_STA=0;
          						t_data.len=0;
   								t_data.buf[t_data.len++]=0X01;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
 					}
 				} 
@@ -935,7 +951,7 @@ void ble_process(void)
 						USART_RX_STA=0;
 								t_data.len=0;
   								t_data.buf[t_data.len++]=0X00;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(ERR_DATA,t_data.buf,t_data.len);   
 				}
 		}
@@ -945,7 +961,7 @@ void ble_process(void)
 						USART_RX_STA=0;     
 								t_data.len=0;
   								t_data.buf[t_data.len++]=0X02;
-  								for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
   								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
 		}
 
@@ -996,7 +1012,7 @@ void control_process(void)
 
 			}
 			else {
-				if(step==BLEG)t_mode.time = gastime[step][strengthflag]-6;  //大腿泄完气后少打气6秒
+				if(step==BLEG)t_mode.time = gastime[step][strengthflag]-8;  //大腿泄完气后少打气6秒
 				else t_mode.time = gastime[step][strengthflag]-4;   //其他泄完气后少打气6秒
 
 			}
@@ -1110,14 +1126,14 @@ void control_process(void)
 void alarmtime_process(void)
 {
   u8 i;
-    if(runstate!=0&&runstate!=3)
+    if(runstate!=0)
       	{
 		if(get_alarmsec()-firsttime>=(alarmtime*60)){
 			runstate=0;
 			t_data.len=0;
 			t_data.buf[t_data.len++]=runstate;
-			for(i=0;i<6-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-			pushlongdata(0x0f,t_data.buf,t_data.len);			
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(GET_RUNSTATE,t_data.buf,t_data.len);			
 		}
 	}
 
@@ -1146,9 +1162,9 @@ void main(void)
 	iap_eeprom_read(0,eeprombuf,2);
 	eepromflag = eeprombuf[0];
 	modelove = eeprombuf[1]; 
-	if(eepromflag!=0x02){
-		eeprombuf[0]=0x02; 
-		eeprombuf[1]=0x00; 
+	if(eepromflag!=0x03){
+		eeprombuf[0]=0x03; 
+		eeprombuf[1]=0x01; //  0X01
 		iap_eeprom_write(0,eeprombuf,2);
 		
 	}
@@ -1179,7 +1195,7 @@ void main(void)
 //		数码管显示
        	show_aip1642(SHOW1,SHOW2);
 //		运行定时
-//		alarmtime_process();
+	alarmtime_process();
 		cleardog(1);
 	}
 }
