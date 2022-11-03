@@ -255,7 +255,7 @@ u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
 //u8 xdata pushbuf[20]; //发送数组
 //u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
 u8 xdata runstate=0;  // 0:停止  1:运行 2:暂停 3:充电
-u8 xdata step=0xff; //模式运行步骤
+u8 xdata step=0x80; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
 u8 xdata kneehot;
 u8 xdata feethot=0; //加热片参数
@@ -384,31 +384,17 @@ void mode_process()
 		//t_mode.p = 0;
 		break;
 	}
-		strengthflag = 2;
-		feethot = tempL2;
-		kneehot=tempL2;
-		hotflag=2;
-		kneelast = kneehot;
+	
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		hotflag=2;  //加热指示灯为2
+		kneelast = kneehot;   //
 		feetlast = feethot;
-		again=0;
+		again=0;  //非充放标志
 		if(step&t_mode.buf[0]==0)clear_stepsec();
 		t_mode.p=0;
 		step=t_mode.buf[t_mode.p];
-//		if(mode==2||mode==3||mode==5) {
-//			if(step==4||step==5||step==7) {
-//				t_mode.time = gastime[step][strengthflag]-4;
-//			}
-//			else if(step==6||step==8||step==9){
-//				t_mode.time = gastime[step][strengthflag]-7;
-
-//			}
-//			else if(step==0||step==1||step==2||step==3){
-//				t_mode.time = gastime[step][strengthflag];
-//			}	
-//		}   
-//		else {  //MODE = 1 4 6 7 8
-//			t_mode.time = gastime[step][strengthflag];  //  10
-//		}
 }
 
 
@@ -621,6 +607,7 @@ void key_process(void)
 					if(runstate==0){
 						runstate=1;
 						mode = 1;
+						clear_stepsec();  //开机清0 ，不能删除  不然开机后模式1会直接运行脚踝
 						mode_process();
 	
 					}
@@ -970,47 +957,58 @@ void ble_process(void)
 void control_process(void)
 {
 	if(runstate==0){   //关机
-		PUMP=0;
-		HEATLED=0;
-		POWERLED=0;
-		valve_process(0,0,0,0); 
-		step=0xff;
-		ui_show(0, 0);
-		FOOTHEAT(0);
-		KNEEHEAT(0);
+		PUMP=0;                  //关闭气泵
+		HEATLED=0;		//关闭加热指示灯
+		POWERLED=0;	//关闭运行指示灯
+		valve_process(0,0,0,0); //关闭全部气阀
+		step=0x80;
+		ui_show(0, 0);  //关闭模式和力度指示灯
+		FOOTHEAT(0);  //关闭足底加热
+		KNEEHEAT(0); //关闭膝盖加热
 	}
 	else if(runstate==1){  //开机
-		FOOTHEAT(feethot);
-		KNEEHEAT(kneehot);
-		if(again==0){
-			if(mode==2||mode==3||mode==5) {
-				if(step==FOOT_ANKLE||step==FOOT_SLEG||step==ANKLE_SLEG) {
+	
+		FOOTHEAT(feethot);   //足底加热
+		KNEEHEAT(kneehot);  //膝盖加热
+		
+		if(again==0){  //非单独充放气囊标志
+			if(mode==2||mode==3||mode==5) {     //双气囊打气状态下减少打气时间
+				if(step==FOOT_ANKLE||step==FOOT_SLEG||step==ANKLE_SLEG) {    //不含大腿的双气囊打气
 					t_mode.time = gastime[step][strengthflag]-4;
 				}
-				else if(step==FOOT_BLEG||step==ANKLE_BLEG||step==SLEG_BLEG){
+				else if(step==FOOT_BLEG||step==ANKLE_BLEG||step==SLEG_BLEG){  //含大腿的双气囊打气 减少时间应该更多
 					t_mode.time = gastime[step][strengthflag]-7;
 
 				}
-				else if(step==FOOT||step==ANKLE||step==SLEG||step==BLEG){
+				else if(step==FOOT||step==ANKLE||step==SLEG||step==BLEG){   //单气囊打气 按正常时间
 					t_mode.time = gastime[step][strengthflag];
 				}	
 			}   
-			else {  //MODE = 1 4 6 7 8
+			else {  //MODE = 1 4 6 7 8   该模式下按正常打气时间
 				t_mode.time = gastime[step][strengthflag];  //  10
 			}
 		}
-		else {    //again =1
-			//t_mode.time = agastime[step][strengthflag];
-			if(step==ALL_OUTGAS)  t_mode.time = gastime[step][strengthflag];
-			else t_mode.time = gastime[step][strengthflag]-4;   //整体打气时间减4s
+		else {    //again =1    //单独充放气囊标志 泄气完后再次充气时间需要减少
+			
+			if(step==ALL_OUTGAS) { 
+				if(t_mode.buf[0]==BLEG)t_mode.time = gastime[step][strengthflag]+4;  //  大腿泄气8秒  
+				else t_mode.time = gastime[step][strengthflag];   //其他泄气4秒
+
+			}
+			else {
+				if(step==BLEG)t_mode.time = gastime[step][strengthflag]-6;  //大腿泄完气后少打气6秒
+				else t_mode.time = gastime[step][strengthflag]-4;   //其他泄完气后少打气6秒
+
+			}
 		}		
 
-		if(get_stepsec()>=t_mode.time){  //  大于10
+		if(get_stepsec()>=t_mode.time){  //  大于10  判断运行步骤的时间是否结束，如果结束则运行下一个步骤
 			clear_stepsec();  //0
 			t_mode.p++; //  1
 			if(t_mode.p>=t_mode.num)t_mode.p=0;
 		}
-		step = t_mode.buf[t_mode.p];  //  12   
+		
+		step = t_mode.buf[t_mode.p];  //  12     //获取运行的步骤
 
            switch(step)
            	{
@@ -1095,7 +1093,7 @@ void control_process(void)
 		}		
 	}
 	else if(runstate==2) { //暂停
-                 PUMP=0;
+              PUMP=0;
 		FOOTHEAT(0);
 		KNEEHEAT(0);
 		ui_show(0, 0);
