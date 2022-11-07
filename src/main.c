@@ -600,6 +600,7 @@ void key_process(void)
 		if(mode>5)mode=1;
 		mode_process();
 		t_data.len=0;
+		t_data.buf[t_data.len++]=runstate;
 		t_data.buf[t_data.len++]=mode;
 		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 		pushlongdata(SET_MODE,t_data.buf,t_data.len);
@@ -612,6 +613,7 @@ void key_process(void)
 		}
 		mode_process();
 		t_data.len=0;
+				t_data.buf[t_data.len++]=runstate;
 		t_data.buf[t_data.len++]=mode;
 		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 		pushlongdata(SET_MODE,t_data.buf,t_data.len);
@@ -667,6 +669,15 @@ void key_process(void)
 			kneeflag = kneelastflag ;
 			kneehot=kneelast;   //膝盖加热
 			feethot=feetlast;  //足底加热
+			t_data.len=0;
+			t_data.buf[t_data.len++]=feethot;
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
+			t_data.len=0;
+			t_data.buf[t_data.len++]=kneehot;
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
+			
 	        }
 	        else {
 			footlastflag = footflag ;
@@ -678,6 +689,14 @@ void key_process(void)
 			feethot=0;
 			footflag =0;
 			kneeflag =0;
+			t_data.len=0;
+			t_data.buf[t_data.len++]=feethot;
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
+			t_data.len=0;
+			t_data.buf[t_data.len++]=kneehot;
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 		}
 
 	}
