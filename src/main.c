@@ -19,8 +19,8 @@
 #define buflen 7
 #define KEYTIME 1000
 
-#define foot_gogas_L1 7                                      /*    脚底    */
-#define foot_gogas_L2 10
+#define foot_gogas_L1 9                                      /*    脚底    */
+#define foot_gogas_L2 11
 #define foot_gogas_L3 15
 #define foot_gogas_L4 17
 
@@ -29,9 +29,9 @@
 #define foot_again_gogas_L3 15
 #define foot_again_gogas_L4 20
 
-#define ankle_gogas_L1 7						   /*    脚踝    */
-#define ankle_gogas_L2 10
-#define ankle_gogas_L3 14
+#define ankle_gogas_L1 9						   /*    脚踝    */
+#define ankle_gogas_L2 11
+#define ankle_gogas_L3 15
 #define ankle_gogas_L4 17
 
 #define ankle_again_gogas_L1 5				  /*    脚踝泄气后充气    */
@@ -49,10 +49,10 @@
 #define sleg_again_gogas_L3 15
 #define sleg_again_gogas_L4 20
 
-#define bleg_gogas_L1 15						 /*   大腿    */
-#define bleg_gogas_L2 19
-#define bleg_gogas_L3 22
-#define bleg_gogas_L4 26
+#define bleg_gogas_L1 14						 /*   大腿    */
+#define bleg_gogas_L2 17
+#define bleg_gogas_L3 20
+#define bleg_gogas_L4 22
 
 #define bleg_again_gogas_L1 5				 /*    大腿   泄气后充气    */
 #define bleg_again_gogas_L2 10
@@ -622,7 +622,8 @@ void key_process(void)
 						mode = modelove;
 						clear_stepsec();  //开机清0 ，不能删除  不然开机后模式1会直接运行脚踝
 						mode_process();
-	
+						firsttime=0;
+						clear_alarmsec();
 					}
 					else if(runstate==1||runstate==2){
 						runstate=0;
@@ -1008,6 +1009,7 @@ void control_process(void)
 			
 			if(step==ALL_OUTGAS) { 
 				if(t_mode.buf[0]==BLEG)t_mode.time = gastime[step][strengthflag]+4;  //  大腿泄气8秒  
+				else if(t_mode.buf[0]==FOOT_ANKLE_SLEG_BLEG)t_mode.time = gastime[step][strengthflag]+2;   //泄气6秒
 				else t_mode.time = gastime[step][strengthflag];   //其他泄气4秒
 
 			}
