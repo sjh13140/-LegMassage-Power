@@ -868,7 +868,7 @@ void ble_process(void)
 								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(GET_STRENGTH,t_data.buf,t_data.len);
 						}
-						else if(USART_RX_BUF[1]==GET_RUNTIME)  //定时设置
+						else if(USART_RX_BUF[1]==SET_RUNTIME)  //定时设置
 						{
 
 						                       clear_alarmsec();
@@ -883,7 +883,7 @@ void ble_process(void)
 									t_data.len=0;
 								t_data.buf[t_data.len++]=alarmflag;
 								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(GET_RUNTIME,t_data.buf,t_data.len);
+								pushlongdata(SET_RUNTIME,t_data.buf,t_data.len);
 									
 						}
 						else if(USART_RX_BUF[1]==GET_RUNTIME){  //获取定时值
