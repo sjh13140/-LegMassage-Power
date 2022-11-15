@@ -212,6 +212,7 @@ typedef enum TIME_ENUM{
 	  GET_VER,
 	  GET_ALLSTATE,
 	  SET_CUSTOM,
+	  GET_GASSTATE,
 	  ERR_DATA=0XEF
 }TIME_E;
 
@@ -250,7 +251,7 @@ u8 xdata eeprombuf[2];
 //u8 xdata powerstate=0;  //电量状态  0:表示电量不足 1:表示电量充足2:表示电量不足
 u16 xdata temp=0;  //串口接收存放校验和
 u8 xdata alarmtime=15;  //定时时间
-u8 xdata alarmflag=1;
+u8 xdata alarmflag=3;
 u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
 //u8 xdata pushbuf[20]; //发送数组
 //u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
@@ -949,6 +950,14 @@ void ble_process(void)
 
 							}
 						}
+						else if(USART_RX_BUF[1]==GET_GASSTATE) {
+								t_data.len=0;
+  								t_data.buf[t_data.len++]=t_mode.buf[t_mode.p];
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
+
+
+						}
 						for(i=0;i< USART_RX_STA;i++)USART_RX_BUF[i]=0;
 						USART_RX_STA=0;
 							ui_show(mode,strengthflag); 
@@ -992,6 +1001,7 @@ void ble_process(void)
  #endif
 void control_process(void)
 {
+u8 i;
 	if(runstate==0){   //关机
 		PUMP=0;                  //关闭气泵
 		HEATLED=0;		//关闭加热指示灯
@@ -1043,6 +1053,10 @@ void control_process(void)
 			clear_stepsec();  //0
 			t_mode.p++; //  1
 			if(t_mode.p>=t_mode.num)t_mode.p=0;
+								t_data.len=0;
+  								t_data.buf[t_data.len++]=t_mode.buf[t_mode.p];
+  								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+  								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
 		}
 		
 		step = t_mode.buf[t_mode.p];  //  12     //获取运行的步骤
