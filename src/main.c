@@ -954,7 +954,7 @@ void ble_process(void)
 								t_data.len=0;
   								t_data.buf[t_data.len++]=t_mode.buf[t_mode.p];
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
+  								pushlongdata(GET_GASSTATE,t_data.buf,t_data.len);
 
 
 						}
@@ -1056,7 +1056,7 @@ u8 i;
 								t_data.len=0;
   								t_data.buf[t_data.len++]=t_mode.buf[t_mode.p];
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-  								pushlongdata(ERR_DATA,t_data.buf,t_data.len);
+  								pushlongdata(GET_GASSTATE,t_data.buf,t_data.len);
 		}
 		
 		step = t_mode.buf[t_mode.p];  //  12     //获取运行的步骤
