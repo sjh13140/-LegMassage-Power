@@ -16,7 +16,7 @@
 #include "ct1642.h"
 #include "wdg.h"
 #include "input.h"
-#define buflen 7
+#define buflen 10
 #define KEYTIME 1000
 
 #define foot_gogas_L1 9                                      /*    脚底    */
@@ -193,7 +193,7 @@ typedef struct DATA_TAG{
 }DATA_T;
 typedef enum TIME_ENUM{
    	SET_RUNSTATE=1,
-	 GET_RUNSTATE,
+	  GET_RUNSTATE,
 	  SET_MODE,
 	  GET_MODE,
 	  SET_LOVEMODE,
@@ -212,6 +212,7 @@ typedef enum TIME_ENUM{
 	  GET_VER,
 	  GET_ALLSTATE,
 	  SET_CUSTOM,
+		GET_CUSTOM,
 	  GET_GASSTATE,
 	  ERR_DATA=0XEF
 }TIME_E;
@@ -289,7 +290,7 @@ void pushlongdata(u8 a,u8 *buf,u8 len)
 {
       u8 i=0;
 	u16 sum=0;
-	u8 tempbuf[15];
+	u8 tempbuf[16];
 	tempbuf[0] = headpara; //协议头
        tempbuf[1] = a;   //功能字
 	tempbuf[2] = len;  //数据长度
@@ -751,9 +752,9 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_MODE)  //模式
 						{
-									clear_alarmsec();
-									firsttime = get_alarmsec();
-									runstate=1;
+									//clear_alarmsec();
+									//firsttime = get_alarmsec();
+									//runstate=1;
 									mode=USART_RX_BUF[3];
 									mode_process();
 									t_data.len=0;
@@ -928,27 +929,44 @@ void ble_process(void)
 								pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);
 						}
 						else if(USART_RX_BUF[1]==SET_CUSTOM){
-							if(mode==5){
-								for(i=0;i<10;i++) {
-								t_mode.buf[i] = USART_RX_BUF[3+i];
-								custombuf[i]= USART_RX_BUF[3+i];
+//							if(mode==5){
+//								for(i=0;i<10;i++) {
+//									//t_mode.buf[i] = USART_RX_BUF[3+i];
+//									custombuf[i]= USART_RX_BUF[3+i];
+//								}
+//								t_mode.num=10;
+//								if(step&t_mode.buf[0]==0)clear_stepsec();
+//								t_mode.p=0;
+//								step=t_mode.buf[t_mode.p];							
+//								t_data.len=0;
+//								t_data.buf[t_data.len++]= 1;
+//								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+//								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
+//							}else {
+//								t_data.len=0;
+//								t_data.buf[t_data.len++]= 0;
+//								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+//								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
 
+//							}
+								for(i=0;i<10;i++) {
+									//t_mode.buf[i] = USART_RX_BUF[3+i];
+									custombuf[i]= USART_RX_BUF[3+i];
 								}
-								t_mode.num=10;
-								if(step&t_mode.buf[0]==0)clear_stepsec();
-								t_mode.p=0;
-								step=t_mode.buf[t_mode.p];							
 								t_data.len=0;
 								t_data.buf[t_data.len++]= 1;
 								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
-							}else {
+								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);		
+						}
+						else if(USART_RX_BUF[1]==GET_CUSTOM) {
 								t_data.len=0;
-								t_data.buf[t_data.len++]= 0;
+								for(i=0;i<sizeof(custombuf);i++){
+									t_data.buf[i]=custombuf[i];
+								}
+								t_data.len = sizeof(custombuf);
 								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-								pushlongdata(SET_CUSTOM,t_data.buf,t_data.len);
-
-							}
+								pushlongdata(GET_CUSTOM,t_data.buf,t_data.len);							
+					
 						}
 						else if(USART_RX_BUF[1]==GET_GASSTATE) {
 								t_data.len=0;
