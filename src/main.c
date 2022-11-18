@@ -672,11 +672,11 @@ void key_process(void)
 			kneehot=kneelast;   //膝盖加热
 			feethot=feetlast;  //足底加热
 			t_data.len=0;
-			t_data.buf[t_data.len++]=feethot;
+			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 			pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
 			t_data.len=0;
-			t_data.buf[t_data.len++]=kneehot;
+			t_data.buf[t_data.len++]=kneeflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 			
@@ -692,11 +692,11 @@ void key_process(void)
 			footflag =0;
 			kneeflag =0;
 			t_data.len=0;
-			t_data.buf[t_data.len++]=feethot;
+			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 			pushlongdata(SET_FOOTHOT,t_data.buf,t_data.len);
 			t_data.len=0;
-			t_data.buf[t_data.len++]=kneehot;
+			t_data.buf[t_data.len++]=kneeflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 		}
