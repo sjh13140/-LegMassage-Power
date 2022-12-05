@@ -6,7 +6,8 @@
 #include <stdio.h>
 #define headpara 0x03
 #define endpara 0xff
-#define codeverion 0x01
+#define codeversion 0xff    //0xff±Ì æ≤‚ ‘∞Ê±æ
+#define hardversion 0xff
 typedef unsigned char u8;
 typedef unsigned short int u16;
 typedef unsigned long int u32;
