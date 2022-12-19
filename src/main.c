@@ -334,7 +334,11 @@ void mode_process()
 		t_mode.num = 4;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
-
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		footflag = 2;
+		kneeflag=2;
 		break;
 	case 2:
 		t_mode.buf[0] = FOOT;
@@ -344,6 +348,11 @@ void mode_process()
 		t_mode.num = 4;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		footflag = 2;
+		kneeflag=2;
 		break;
 	case 3:
 		t_mode.buf[0]=FOOT_ANKLE;
@@ -355,11 +364,21 @@ void mode_process()
 		t_mode.num = 6;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		footflag = 2;
+		kneeflag=2;
 		break;
 	case 4:
 		t_mode.buf[0]=FOOT_ANKLE_SLEG_BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		footflag = 2;
+		kneeflag=2;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
@@ -368,18 +387,32 @@ void mode_process()
 		t_mode.buf[i]=custombuf[i];
 		t_mode.num = 10;
 		break;
+		strengthflag = 2;   //力度2档
+		feethot = tempL2;   //温度2档
+		kneehot=tempL2;     //温度2档
+		footflag = 2;
+		kneeflag=2;
 	case 6:
 		t_mode.buf[0]=FOOT_ANKLE;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
+		strengthflag = 2;   //力度2档
+		feethot = 0;   //温度2档
+		kneehot=0;     //温度2档
+		footflag = 0;
+		kneeflag=0;
 		break;
 	case 7:
 		t_mode.buf[0]=SLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
 		//t_mode.p = 0;
+		feethot = 0;   //温度2档
+		kneehot=0;     //温度2档
+		footflag = 0;
+		kneeflag=0;
 		break;
 	case 8:
 		t_mode.buf[0]=BLEG;
@@ -387,14 +420,12 @@ void mode_process()
 		t_mode.num = 2;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
+		feethot = 0;   //温度2档
+		kneehot=0;     //温度2档
+		footflag = 0;
+		kneeflag=0;
 		break;
 	}
-	
-		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
-		footflag = 2;
-		kneeflag=2;
 		footlastflag =footflag;
 		kneelastflag = kneeflag;
 		kneelast = kneehot;   //
@@ -615,7 +646,7 @@ void key_process(void)
 		}
 		mode_process();
 		t_data.len=0;
-				t_data.buf[t_data.len++]=runstate;
+		t_data.buf[t_data.len++]=runstate;
 		t_data.buf[t_data.len++]=mode;
 		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 		pushlongdata(SET_MODE,t_data.buf,t_data.len);
@@ -666,7 +697,7 @@ void key_process(void)
 					pushlongdata(SET_STRENGTH,t_data.buf,t_data.len);
 	}
 	else if(key==KEY5SHORT){  //加热 
-               if(footflag==0&&kneeflag==0){
+               if(footflag==0&&kneeflag==0){   //如果当前状态是关加热 则开启加热
 			 footflag = 	footlastflag;
 			kneeflag = kneelastflag ;
 			kneehot=kneelast;   //膝盖加热
@@ -681,7 +712,7 @@ void key_process(void)
 			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 			
 	        }
-	        else {
+	        else {   //如果当前状态是开加热 则关闭加热
 			footlastflag = footflag ;
 			kneelastflag = kneeflag ;
 			kneelast = kneehot;
@@ -691,6 +722,7 @@ void key_process(void)
 			feethot=0;
 			footflag =0;
 			kneeflag =0;
+			
 			t_data.len=0;
 			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -912,7 +944,7 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==GET_VER){  //获取程序版本
 								t_data.len=0;
-								t_data.buf[t_data.len++]= codeverion;
+								t_data.buf[t_data.len++]= codeversion;
 								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 								pushlongdata(RST_SYS,t_data.buf,t_data.len);
 						}
@@ -1233,21 +1265,14 @@ void main(void)
 	VALVE2=0;
 	VALVE3=0;
 	VALVE4=0;
-	//ui_show(0,0, 0, 0);
-		//ui_show(mode,strengthflag, 0, 0);  POWERLED=runstate;HEATLED=hotflag;
 	wdg_init();
   while(1)
 	{
-		//按键设置处理
-		key_process();
-//		//蓝牙接收处理
-		ble_process();
 
-//		//输出控制
+		key_process();
+		ble_process();
 		control_process();
-//		数码管显示
        	show_aip1642(SHOW1,SHOW2);
-//		运行定时
 	alarmtime_process();
 		cleardog(1);
 	}
