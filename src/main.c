@@ -259,8 +259,8 @@ u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
 u8 xdata runstate=0;  // 0:停止  1:运行 2:暂停 3:充电
 u8 xdata step=0x80; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
-u8 xdata kneehot;
-u8 xdata feethot=0; //加热片参数
+u8 xdata kneepara;
+u8 xdata footpara=0; //加热片参数
 u8 xdata kneelast;
 u8 xdata feetlast=0; //加热片参数
 u8 xdata footflag=0;
@@ -335,10 +335,12 @@ void mode_process()
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
+//		footpara = tempL2;   //温度2档
+//		kneepara=tempL2;     //温度2档
 		footflag = 2;
 		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 		break;
 	case 2:
 		t_mode.buf[0] = FOOT;
@@ -349,10 +351,12 @@ void mode_process()
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
+//		footpara = tempL2;   //温度2档
+//		kneepara=tempL2;     //温度2档
 		footflag = 2;
 		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 		break;
 	case 3:
 		t_mode.buf[0]=FOOT_ANKLE;
@@ -365,20 +369,24 @@ void mode_process()
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
+//		footpara = tempL2;   //温度2档
+//		kneepara=tempL2;     //温度2档
 		footflag = 2;
 		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 		break;
 	case 4:
 		t_mode.buf[0]=FOOT_ANKLE_SLEG_BLEG;
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
 		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
+//		footpara = tempL2;   //温度2档
+//		kneepara=tempL2;     //温度2档
 		footflag = 2;
 		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		break;
@@ -388,10 +396,12 @@ void mode_process()
 		t_mode.num = 10;
 		break;
 		strengthflag = 2;   //力度2档
-		feethot = tempL2;   //温度2档
-		kneehot=tempL2;     //温度2档
+//		footpara = tempL2;   //温度2档
+//		kneepara=tempL2;     //温度2档
 		footflag = 2;
 		kneeflag=2;
+		footlastflag =footflag;
+		kneelastflag = kneeflag;
 	case 6:
 		t_mode.buf[0]=FOOT_ANKLE;
 		t_mode.buf[1]=ALL_OUTGAS;
@@ -399,8 +409,8 @@ void mode_process()
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
 		strengthflag = 2;   //力度2档
-		feethot = 0;   //温度2档
-		kneehot=0;     //温度2档
+//		footpara = 0;   //温度2档
+//		kneepara=0;     //温度2档
 		footflag = 0;
 		kneeflag=0;
 		break;
@@ -409,8 +419,8 @@ void mode_process()
 		t_mode.buf[1]=ALL_OUTGAS;
 		t_mode.num = 2;
 		//t_mode.p = 0;
-		feethot = 0;   //温度2档
-		kneehot=0;     //温度2档
+//		footpara = 0;   //温度2档
+//		kneepara=0;     //温度2档
 		footflag = 0;
 		kneeflag=0;
 		break;
@@ -420,16 +430,13 @@ void mode_process()
 		t_mode.num = 2;
 		//heat_process(tempL4,tempL4);
 		//t_mode.p = 0;
-		feethot = 0;   //温度2档
-		kneehot=0;     //温度2档
+//		footpara = 0;   //温度2档
+//		kneepara=0;     //温度2档
 		footflag = 0;
 		kneeflag=0;
 		break;
 	}
-		footlastflag =footflag;
-		kneelastflag = kneeflag;
-		kneelast = kneehot;   //
-		feetlast = feethot;
+
 		again=0;  //非充放标志
 		if(step&t_mode.buf[0]==0)clear_stepsec();
 		t_mode.p=0;
@@ -700,8 +707,6 @@ void key_process(void)
                if(footflag==0&&kneeflag==0){   //如果当前状态是关加热 则开启加热
 			 footflag = 	footlastflag;
 			kneeflag = kneelastflag ;
-			kneehot=kneelast;   //膝盖加热
-			feethot=feetlast;  //足底加热
 			t_data.len=0;
 			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -715,14 +720,8 @@ void key_process(void)
 	        else {   //如果当前状态是开加热 则关闭加热
 			footlastflag = footflag ;
 			kneelastflag = kneeflag ;
-			kneelast = kneehot;
-			feetlast = feethot;
-			
-			kneehot=0;
-			feethot=0;
 			footflag =0;
 			kneeflag =0;
-			
 			t_data.len=0;
 			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -835,21 +834,21 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_FOOTHOT){  //设置加热
 						             footflag = USART_RX_BUF[3];
-								if(footflag==0) {
-									feethot = 0;
-								}
-								else if(footflag==1){
-									feethot = tempL1;
+//								if(footflag==0) {
+//									footpara = 0;
+//								}
+//								else if(footflag==1){
+//									footpara = tempL1;
 
-								}
-								else if(footflag==2){
-								feethot = tempL2;
+//								}
+//								else if(footflag==2){
+//								footpara = tempL2;
 
-								}
-								else if(footflag==3){
-								feethot = tempL3;
+//								}
+//								else if(footflag==3){
+//								footpara = tempL3;
 
-								}
+//								}
                                           			t_data.len=0;
   								t_data.buf[t_data.len++]= footflag;
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -863,21 +862,21 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_KNEEHOT){  //设置加热
 						             kneeflag = USART_RX_BUF[3];
-								if(kneeflag==0) {
-									kneehot = 0;
-								}
-								else if(kneeflag==1){
-									kneehot =tempL1;
+//								if(kneeflag==0) {
+//									kneepara = 0;
+//								}
+//								else if(kneeflag==1){
+//									kneepara =tempL1;
 
-								}
-								else if(kneeflag==2){
-								kneehot = tempL2;
+//								}
+//								else if(kneeflag==2){
+//								kneepara = tempL2;
 
-								}
-								else if(kneeflag==3){
-								kneehot =tempL3;
+//								}
+//								else if(kneeflag==3){
+//								kneepara =tempL3;
 
-								}
+//								}
                                           			t_data.len=0;
   								t_data.buf[t_data.len++]= kneeflag;
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -1063,9 +1062,16 @@ u8 i;
 		KNEEHEAT(0); //关闭膝盖加热
 	}
 	else if(runstate==1){  //开机
-	
-		FOOTHEAT(feethot);   //足底加热
-		KNEEHEAT(kneehot);  //膝盖加热
+		if(footflag==0)footpara=0;
+		else if(footflag==1)footpara=tempL1;
+		else if(footflag==2)footpara=tempL2;
+		else if(footflag==3)footpara=tempL3;
+		if(kneeflag==0)kneepara=0;
+		else if(kneeflag==1)kneepara=tempL1;
+		else if(kneeflag==2)kneepara=tempL2;
+		else if(kneeflag==3)kneepara=tempL3;		
+		FOOTHEAT(footpara);   //足底加热
+		KNEEHEAT(kneepara);  //膝盖加热
 		
 		if(again==0){  //非单独充放气囊标志
 			if(mode==2||mode==3||mode==5) {     //双气囊打气状态下减少打气时间
@@ -1273,7 +1279,7 @@ void main(void)
 		ble_process();
 		control_process();
        	show_aip1642(SHOW1,SHOW2);
-	alarmtime_process();
+		alarmtime_process();
 		cleardog(1);
 	}
 }
