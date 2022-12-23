@@ -9,5 +9,5 @@ void clear_alarmsec(void);
 u8 get_stepsec(void);
 void clear_stepsec(void);
 void set_stepsec(u8 para);
-
+u16 set_alarmsec(u16 para);
 #endif

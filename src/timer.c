@@ -15,6 +15,7 @@ static u32 s_u32systimescnt;
 static u16 s_alarmsec;
 static u8  s_stepsec;
 static u16  s_500ms;
+extern u8 xdata runstate;
 /**********************************************************************************************************
 **函数名称 ：tim0_mode1_init
 **函数描述 ：定时器timer0 MODE1 初始化设置
@@ -47,10 +48,9 @@ void timer0_irq() interrupt 1
 			s_500ms++;
 		if(s_500ms==500){
 			s_500ms=0;
-			s_alarmsec++;
+			if(runstate==1)s_alarmsec++;
 			s_stepsec++;
 		}
-		//aip1642_process();
 }
 void tim1_mode1_init(void)           
 {               
@@ -80,6 +80,10 @@ u16 get_alarmsec(void)
         return s_alarmsec;
 
 }
+//u16 set_alarmsec(u16 para)
+//{
+//	s_alarmsec = para;
+//}
 void clear_alarmsec(void)
 {
 	s_alarmsec=0;

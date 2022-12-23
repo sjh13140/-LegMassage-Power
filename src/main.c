@@ -254,9 +254,11 @@ u16 xdata temp=0;  //串口接收存放校验和
 u8 xdata alarmtime=15;  //定时时间
 u8 xdata alarmflag=3;
 u32 xdata firsttime=0;  //获取定时时间的首次计算时间戳
+u32 xdata alarmtimetemp;
 //u8 xdata pushbuf[20]; //发送数组
 //u32 xdata ledtime;  //低电量闪烁时间的首次计算时间戳
 u8 xdata runstate=0;  // 0:停止  1:运行 2:暂停 3:充电
+u8 xdata runstate_temp=0;
 u8 xdata step=0x80; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
 u8 xdata kneepara;
@@ -394,7 +396,7 @@ void mode_process()
 		for(i=0;i<10;i++)
 		t_mode.buf[i]=custombuf[i];
 		t_mode.num = 10;
-		break;
+		
 		strengthflag = 2;   //力度2档
 //		footpara = tempL2;   //温度2档
 //		kneepara=tempL2;     //温度2档
@@ -402,6 +404,7 @@ void mode_process()
 		kneeflag=2;
 		footlastflag =footflag;
 		kneelastflag = kneeflag;
+		break;
 	case 6:
 		t_mode.buf[0]=FOOT_ANKLE;
 		t_mode.buf[1]=ALL_OUTGAS;
@@ -659,7 +662,7 @@ void key_process(void)
 		pushlongdata(SET_MODE,t_data.buf,t_data.len);
 	}
 	else if(key==KEY3LONG){  //开关
-					if(runstate==0){
+					if(runstate==0){   //关机的时候进行开机
 						runstate=1;
 						mode = modelove;
 						clear_stepsec();  //开机清0 ，不能删除  不然开机后模式1会直接运行脚踝
@@ -674,6 +677,7 @@ void key_process(void)
 						strengthflag=0;
 						mode=0;
 					}
+					runstate_temp = runstate;
 					t_data.len=0;
 					t_data.buf[t_data.len++]=runstate;
 					for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -682,14 +686,15 @@ void key_process(void)
 	else if(key==KEY3SHORT){ //开关
 		if(runstate==1){
 			runstate=2;
-		 t_mode.temptime = get_stepsec();	
- 		stoptime=getsystimes();
-		//stopflag=0;
+			t_mode.temptime = get_stepsec();	
+			stoptime=getsystimes();
+			//stopflag=0;
 		}
-		else if(runstate==2){
+		else if(runstate==2){  //
 			runstate = 1;
 			set_stepsec(t_mode.temptime);
 		}
+		runstate_temp = runstate;
 		t_data.len=0;
 		t_data.buf[t_data.len++]=runstate;
 		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -763,11 +768,15 @@ void ble_process(void)
 					       temp=0;
 						if(USART_RX_BUF[1]==SET_RUNSTATE)  //运行状态
 						{
-									clear_alarmsec();
-									firsttime = get_alarmsec();
+
 									runstate=USART_RX_BUF[3];
-									mode =modelove;
-									mode_process();
+									if(runstate_temp==0) {
+										clear_alarmsec();
+										firsttime = get_alarmsec();
+										mode =modelove;
+										mode_process();
+									}
+									runstate_temp = runstate;
 									t_data.len=0;
 									t_data.buf[t_data.len++]=runstate;
 									for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
