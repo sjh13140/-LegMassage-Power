@@ -9,5 +9,7 @@
 #define VALVE4   P0_7  //大腿
 #define POWERLED   P0_1 //电源指示灯
 #define HEATLED   P0_0  //加热指示灯
+#define FOOTHEAT 	P1_2
+#define KNEEHEAT  	P1_3
 void gpio_output_init();
 #endif

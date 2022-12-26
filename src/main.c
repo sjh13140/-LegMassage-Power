@@ -263,12 +263,12 @@ u8 xdata step=0x80; //模式运行步骤
 u32 xdata steptimes=0; //模式运行时间计算
 u8 xdata kneepara;
 u8 xdata footpara=0; //加热片参数
-u8 xdata kneelast;
-u8 xdata feetlast=0; //加热片参数
+//u8 xdata kneelast;
+//u8 xdata feetlast=0; //加热片参数
 u8 xdata footflag=0;
 u8 xdata kneeflag=0;
-u8 xdata footlastflag=0;
-u8 xdata kneelastflag=0;
+u8 xdata footlastflag=2;
+u8 xdata kneelastflag=2;
 
 u8 xdata SHOW1=UI_NONE;
 u8 xdata SHOW2=UI_NONE;
@@ -283,6 +283,14 @@ u32 xdata stoptime;
 //u8 xdata stopflag;
 u8 xdata again=0;
 u8 xdata custombuf[10]={FOOT,ANKLE,SLEG,BLEG,FOOT_ANKLE,ANKLE_SLEG,SLEG_BLEG,FOOT_SLEG,ANKLE_BLEG,FOOT_BLEG};
+u8 xdata foot_3min_flag=0;
+u8 xdata knee_3min_flag=0;
+u8 xdata foot_step;
+u8 xdata knee_step;
+u32 xdata end_foottimes;
+u32 xdata end_kneetimes;
+u32 xdata head_foottimes;
+u32 xdata head_kneetimes;
 void ui_show(u8 para1,u8 para2)
 {
 	SHOW1=para1;
@@ -304,7 +312,7 @@ void pushlongdata(u8 a,u8 *buf,u8 len)
 	tempbuf[3+len+1] = sum%256;
 	tempbuf[3+len+2] = endpara;  //#  协议尾
 		for(i=0;i<6+len;i++)
-			{
+		{
 	            putchar(tempbuf[i]);
 
 		}	  
@@ -320,9 +328,75 @@ void valve_process(u8 para1,u8 para2,u8 para3,u8 para4)
 
 }
 void heat_process(u8 para1,u8 para2)
-{
-		FOOTHEAT(para1);
-		KNEEHEAT( para2);
+{	
+	if(para1==0){
+		FOOTHEAT=0;	
+	}
+	else if(para1==1||para1==2) {
+		if(foot_3min_flag==0) {
+			end_foottimes = 180;
+		}
+		switch(foot_step) {
+			case 0:
+				FOOTHEAT=1;
+				if(get_footsec()-head_foottimes>=end_foottimes) {
+					if(foot_3min_flag==0){
+						foot_3min_flag=1;		
+					}
+					end_foottimes = 5;
+					head_foottimes=get_footsec();
+					foot_step = 1;
+				}
+			break;
+			case 1:
+				FOOTHEAT=0;
+				if(get_footsec()-head_foottimes>=end_foottimes) {
+					if(para1==1)end_foottimes= 5;
+					else if(para1==2)end_foottimes= 10;
+					head_foottimes=get_footsec();
+					foot_step = 0;
+					
+				}
+			break;
+		}
+	}
+	else {
+		FOOTHEAT=1;
+	}
+	if(para2==0){
+		FOOTHEAT=0;	
+	}
+	else if(para2==1||para2==2) {
+		if(knee_3min_flag==0) {
+			end_kneetimes = 180; // 3*60*500 
+		}
+		switch(knee_step) {
+			case 0:
+				KNEEHEAT=1;
+				if(get_kneesec()-head_kneetimes>=end_kneetimes) {
+					if(knee_3min_flag==0){
+						knee_3min_flag=1;		
+					}
+					end_kneetimes = 5;
+					head_kneetimes=get_kneesec();
+					knee_step = 1;
+				}
+			break;
+			case 1:
+				KNEEHEAT=0;
+				if(get_kneesec()-head_kneetimes>=end_kneetimes)  {
+					if(para2==1)end_kneetimes=5;
+					else if(para2==2)end_kneetimes=10;
+					head_kneetimes=get_kneesec();
+					knee_step = 0;
+					
+				}
+			break;
+		}
+	}
+	else {
+		KNEEHEAT=1;
+	}
 }
 void mode_process()
 {
@@ -686,13 +760,13 @@ void key_process(void)
 	else if(key==KEY3SHORT){ //开关
 		if(runstate==1){
 			runstate=2;
-			t_mode.temptime = get_stepsec();	
+			//t_mode.temptime = get_stepsec();	
 			stoptime=getsystimes();
 			//stopflag=0;
 		}
 		else if(runstate==2){  //
 			runstate = 1;
-			set_stepsec(t_mode.temptime);
+			//set_stepsec(t_mode.temptime);
 		}
 		runstate_temp = runstate;
 		t_data.len=0;
@@ -712,6 +786,8 @@ void key_process(void)
                if(footflag==0&&kneeflag==0){   //如果当前状态是关加热 则开启加热
 			 footflag = 	footlastflag;
 			kneeflag = kneelastflag ;
+			foot_3min_flag=0;
+			knee_3min_flag=0;
 			t_data.len=0;
 			t_data.buf[t_data.len++]=footflag;
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -736,7 +812,6 @@ void key_process(void)
 			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
 			pushlongdata(SET_KNEEHOT,t_data.buf,t_data.len);
 		}
-
 	}
 
 	ui_show(mode,strengthflag); 
@@ -1067,21 +1142,22 @@ u8 i;
 		valve_process(0,0,0,0); //关闭全部气阀
 		step=0x80;
 		ui_show(0, 0);  //关闭模式和力度指示灯
-		FOOTHEAT(0);  //关闭足底加热
-		KNEEHEAT(0); //关闭膝盖加热
+//		FOOTHEAT(0);  //关闭足底加热
+//		KNEEHEAT(0); //关闭膝盖加热
+		heat_process(0, 0);
 	}
 	else if(runstate==1){  //开机
-		if(footflag==0)footpara=0;
-		else if(footflag==1)footpara=tempL1;
-		else if(footflag==2)footpara=tempL2;
-		else if(footflag==3)footpara=tempL3;
-		if(kneeflag==0)kneepara=0;
-		else if(kneeflag==1)kneepara=tempL1;
-		else if(kneeflag==2)kneepara=tempL2;
-		else if(kneeflag==3)kneepara=tempL3;		
-		FOOTHEAT(footpara);   //足底加热
-		KNEEHEAT(kneepara);  //膝盖加热
-		
+//		if(footflag==0)footpara=0;
+//		else if(footflag==1)footpara=tempL1;
+//		else if(footflag==2)footpara=tempL2;
+//		else if(footflag==3)footpara=tempL3;
+//		if(kneeflag==0)kneepara=0;
+//		else if(kneeflag==1)kneepara=tempL1;
+//		else if(kneeflag==2)kneepara=tempL2;
+//		else if(kneeflag==3)kneepara=tempL3;		
+//		FOOTHEAT(footpara);   //足底加热
+//		KNEEHEAT(kneepara);  //膝盖加热
+		heat_process(footflag, kneeflag);
 		if(again==0){  //非单独充放气囊标志
 			if(mode==2||mode==3||mode==5) {     //双气囊打气状态下减少打气时间
 				if(step==FOOT_ANKLE||step==FOOT_SLEG||step==ANKLE_SLEG) {    //不含大腿的双气囊打气
@@ -1210,8 +1286,9 @@ u8 i;
 	}
 	else if(runstate==2) { //暂停
               PUMP=0;
-		FOOTHEAT(0);
-		KNEEHEAT(0);
+//		FOOTHEAT(0);
+//		KNEEHEAT(0);
+		heat_process(0, 0);
 		ui_show(0, 0);
 		HEATLED=0;
 		if(getsystimes()-stoptime>=500){
@@ -1253,8 +1330,8 @@ void main(void)
 	uart1_timer2_init();  //uart1_timer2初始化
 	tim0_mode1_init();
 	tim1_mode1_init(); 
-	pwm0_init();
-	pwm1_init();
+//	pwm0_init();
+//	pwm1_init();
 	gpio_output_init();
 	input_init();
 	ct1642_gpio_init();

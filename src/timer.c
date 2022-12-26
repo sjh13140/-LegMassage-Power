@@ -14,8 +14,11 @@
 static u32 s_u32systimescnt;
 static u16 s_alarmsec;
 static u8  s_stepsec;
+static u8  s_footsec;
+static u8  s_kneesec;
 static u16  s_500ms;
 extern u8 xdata runstate;
+
 /**********************************************************************************************************
 **函数名称 ：tim0_mode1_init
 **函数描述 ：定时器timer0 MODE1 初始化设置
@@ -48,9 +51,16 @@ void timer0_irq() interrupt 1
 			s_500ms++;
 		if(s_500ms==500){
 			s_500ms=0;
-			if(runstate==1)s_alarmsec++;
-			s_stepsec++;
+			if(runstate==1) {
+				s_alarmsec++;
+				s_footsec++;
+				s_kneesec++;
+				s_stepsec++;
+			}
+			
+
 		}
+
 }
 void tim1_mode1_init(void)           
 {               
@@ -99,4 +109,20 @@ void set_stepsec(u8 para)
 void clear_stepsec(void)
 {
 	s_stepsec=0;
+}
+u8 get_footsec()
+{  
+        return s_footsec;
+}
+u8 get_kneesec()
+{  
+        return s_kneesec;
+}
+void set_footsec(u8 para)
+{
+	s_footsec = para;
+}
+void set_kneesec(u8 para)
+{
+	s_kneesec = para;
 }
