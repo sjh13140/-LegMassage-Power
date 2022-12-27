@@ -12,4 +12,6 @@ void set_stepsec(u8 para);
 u16 set_alarmsec(u16 para);
 u8 get_footsec();
 u8 get_kneesec();
+void set_footsec(u8 para);
+void set_kneesec(u8 para);
 #endif
