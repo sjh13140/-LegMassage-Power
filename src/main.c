@@ -369,7 +369,7 @@ void heat_process(u8 para1,u8 para2)
 	}
 	else if(para2==1||para2==2) {
 		if(knee_3min_flag==0) {
-			end_kneetimes = 10; // 3*60*500 
+			end_kneetimes = 180; // 3*60*500 
 		}
 		switch(knee_step) {
 			case 0:
@@ -378,7 +378,7 @@ void heat_process(u8 para1,u8 para2)
 					if(knee_3min_flag==0){
 						knee_3min_flag=1;		
 					}
-					end_kneetimes = 3;
+					end_kneetimes = 5;
 					head_kneetimes=get_kneesec();
 					knee_step = 1;
 				}
@@ -387,7 +387,7 @@ void heat_process(u8 para1,u8 para2)
 				KNEEHEAT=0;
 				if(get_kneesec()-head_kneetimes>=end_kneetimes)  {
 					if(para2==1)end_kneetimes=5;
-					else if(para2==2)end_kneetimes=6;
+					else if(para2==2)end_kneetimes=10;
 					head_kneetimes=get_kneesec();
 					knee_step = 0;
 					
