@@ -334,7 +334,7 @@ void heat_process(u8 para1,u8 para2)
 	}
 	else if(para1==1||para1==2) {
 		if(foot_3min_flag==0) {
-			end_foottimes = 10; //180
+			end_foottimes = 180; //180
 		}
 		switch(foot_step) {
 			case 0:
@@ -343,7 +343,7 @@ void heat_process(u8 para1,u8 para2)
 					if(foot_3min_flag==0){
 						foot_3min_flag=1;		
 					}
-					end_foottimes = 3;
+					end_foottimes = 5;
 					head_foottimes=get_footsec();
 					foot_step = 1;
 				}
@@ -352,7 +352,7 @@ void heat_process(u8 para1,u8 para2)
 				FOOTHEAT=0;
 				if(get_footsec()-head_foottimes>=end_foottimes) {
 					if(para1==1)end_foottimes= 5;
-					else if(para1==2)end_foottimes= 6;
+					else if(para1==2)end_foottimes= 10;
 					head_foottimes=get_footsec();
 					foot_step = 0;
 					
