@@ -19,37 +19,37 @@
 #define buflen 10
 #define KEYTIME 1000
 
-#define foot_gogas_L1 9                                      /*    脚底    */
-#define foot_gogas_L2 11
-#define foot_gogas_L3 15
-#define foot_gogas_L4 17
+#define foot_gogas_L1 13                                     /*    脚底    */
+#define foot_gogas_L2 15
+#define foot_gogas_L3 17
+#define foot_gogas_L4 19
 
 #define foot_again_gogas_L1 5                            /*    脚底泄气后充气    */
 #define foot_again_gogas_L2 10
 #define foot_again_gogas_L3 15
 #define foot_again_gogas_L4 20
 
-#define ankle_gogas_L1 9						   /*    脚踝    */
-#define ankle_gogas_L2 11
-#define ankle_gogas_L3 15
-#define ankle_gogas_L4 17
+#define ankle_gogas_L1 13 					   /*    脚踝    */
+#define ankle_gogas_L2 15
+#define ankle_gogas_L3 17
+#define ankle_gogas_L4 19
 
 #define ankle_again_gogas_L1 5				  /*    脚踝泄气后充气    */
 #define ankle_again_gogas_L2 10
 #define ankle_again_gogas_L3 15
 #define ankle_again_gogas_L4 20
 
-#define sleg_gogas_L1 11						 /*   小腿    */
-#define sleg_gogas_L2 23
-#define sleg_gogas_L3 26
-#define sleg_gogas_L4 28
+#define sleg_gogas_L1 15						 /*   小腿    */
+#define sleg_gogas_L2 24
+#define sleg_gogas_L3 27
+#define sleg_gogas_L4 29
 
 #define sleg_again_gogas_L1 5				 /*    小腿   泄气后充气    */
 #define sleg_again_gogas_L2 10
 #define sleg_again_gogas_L3 15
 #define sleg_again_gogas_L4 20
 
-#define bleg_gogas_L1 14						 /*   大腿    */
+#define bleg_gogas_L1 15						 /*   大腿    */
 #define bleg_gogas_L2 17
 #define bleg_gogas_L3 20
 #define bleg_gogas_L4 22
@@ -781,7 +781,7 @@ void key_process(void)
 		t_data.buf[t_data.len++]= mode;
 		t_data.buf[t_data.len++]= modelove;
 		t_data.buf[t_data.len++]= alarmflag;
-		t_data.buf[t_data.len++]= 0;
+		t_data.buf[t_data.len++]= strengthflag;
 		t_data.buf[t_data.len++]= 0;	
 		t_data.buf[t_data.len++]= 0;
 		}
@@ -852,7 +852,7 @@ void key_process(void)
 }
 
 
- #if 1
+
 //蓝牙传输数据处理
 void ble_process(void)
 {
@@ -1129,7 +1129,7 @@ void ble_process(void)
 	  }
 
 }
- #endif
+
 void control_process(void)
 {
 u8 i;
