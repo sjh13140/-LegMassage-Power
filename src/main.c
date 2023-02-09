@@ -110,9 +110,10 @@
 #define foot_ankle_sleg_bleg_outgas_L4 4
 
 
-#define tempL3 255
-#define tempL2 230
-#define tempL1 200
+#define tempL3 30
+#define tempL2 20
+#define tempL1 10
+u8 xdata pval=10;
 u8 code gastime[16][5]={
 	{0,foot_ankle_sleg_bleg_outgas_L1, foot_ankle_sleg_bleg_outgas_L2, foot_ankle_sleg_bleg_outgas_L3, foot_ankle_sleg_bleg_outgas_L4},
 	{1,foot_gogas_L1, foot_gogas_L2, foot_gogas_L3, foot_gogas_L4},                
@@ -1129,79 +1130,80 @@ u8 i;
            switch(step)
            	{
               case FOOT:           //½Åµ×
-			PUMP=1;
+			//PUMP=1;
+			pwmval = pval;
 			valve_process(1,0,0,0); // FOOT ANKLE SLEG BLEG
 			//twogasbagrun=0;
 			break;
 		case ANKLE:         //½Åõ×
 			//t_mode.time = t_downgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,1,0,0); 
 			//twogasbagrun=0;
 			break;
               case SLEG:           //Ð¡ÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,0,1,0); 
 			//twogasbagrun=0;
 			break;
 		case BLEG:         //´óÍÈ
 			//t_mode.time = t_downgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,0,0,1); 
 			//twogasbagrun=0;
 			break;
               case FOOT_ANKLE:           //½Åµ×+ ½Åõ×
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(1,1,0,0); 
 			//twogasbagrun=0;
 			break;
               case FOOT_SLEG:           //½Åµ×+ Ð¡ÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(1,0,1,0); 
 			//twogasbagrun=0;
 			break;
 		 case FOOT_BLEG:           //½Åµ×+ ´óÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+		pwmval = pval;
 			valve_process(1,0,0,1); 
 			//twogasbagrun=0;
 			break;
               case ANKLE_SLEG:           //½Åõ×+ Ð¡ÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,1,1,0); 
 			//twogasbagrun=0;
 			break;
 		 case ANKLE_BLEG:           //½Åõ×+ ´óÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,1,0,1); 
 			//twogasbagrun=0;
 			break;
 		 case SLEG_BLEG:           //Ð¡ÍÈ+ ´óÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(0,0,1,1); 
 			//twogasbagrun=0;
 			break;
 		case FOOT_ANKLE_SLEG:         //½Åµ×+ ½Åõ×+Ð¡ÍÈ
 			//t_mode.time = t_downgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(1,1,1,0); 
 			//twogasbagrun=0;
 			break;
               case FOOT_ANKLE_SLEG_BLEG:            //½Åµ×+ ½Åõ×+Ð¡ÍÈ+´óÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=1;
+			pwmval = pval;
 			valve_process(1,1,1,1); 
 			//twogasbagrun=0;
 			break;	
               case ALL_OUTGAS:            //½Åµ×+ ½Åõ×+Ð¡ÍÈ+´óÍÈ
 			//t_mode.time = t_upgas.gotime;
-			PUMP=0;
+			pwmval = 0;
 			valve_process(0,0,0,0); 
 			again=1;
 			//twogasbagrun=0;
@@ -1281,6 +1283,7 @@ void main(void)
 	VALVE3=0;
 	VALVE4=0;
 	wdg_init();
+	pwmval = 0;
   while(1)
 	{
 

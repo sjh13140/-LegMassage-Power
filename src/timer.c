@@ -4,7 +4,7 @@
 #define FRC_HZ				14745600
 #define FRC_DIV				2
 #define CLK_US              2000                     //2000us
-#define CLK_US1     	  2000
+#define CLK_US1     	  1
 #define TIME_RELOAD        (unsigned int)(65536-(((FRC_HZ/FRC_DIV)/2/1000)*CLK_US/1000))   //精度更高
 #define TIME_RELOAD1        (unsigned int)(65536-(((FRC_HZ/FRC_DIV)/2/1000)*CLK_US1/1000))   //精度更高
 
@@ -16,6 +16,8 @@ static u16 s_alarmsec;
 static u8  s_stepsec;
 static u16  s_500ms;
 extern u8 xdata runstate;
+u8 xdata pwmval;
+u8 xdata pwmcnt;
 /**********************************************************************************************************
 **函数名称 ：tim0_mode1_init
 **函数描述 ：定时器timer0 MODE1 初始化设置
@@ -44,6 +46,7 @@ void timer0_irq() interrupt 1
 	//不需要清标志位，mcu进入中断时自动清除
 		  TH0=(TIME_RELOAD) / 256;
 		  TL0=(TIME_RELOAD) % 256;       // 2ms++
+		  	aip1642_process();
 			s_u32systimescnt++;
 			s_500ms++;
 		if(s_500ms==500){
@@ -67,7 +70,13 @@ void timer1_irq() interrupt 3
 	//不需要清标志位，mcu进入中断时自动清除
 		  TH1=(TIME_RELOAD1) / 256;
 		  TL1=(TIME_RELOAD1) % 256;       // 2ms++
-		aip1642_process();
+	pwmcnt++; 
+	if(pwmcnt<=pwmval&&pwmcnt>0) PUMP=1; 
+	else 
+	{  
+		PUMP=0;  
+		if(pwmcnt>=100)pwmcnt=0; 
+	}	
 }
 u32 getsystimes(void)
 {

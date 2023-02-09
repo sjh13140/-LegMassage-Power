@@ -10,4 +10,6 @@ u8 get_stepsec(void);
 void clear_stepsec(void);
 void set_stepsec(u8 para);
 u16 set_alarmsec(u16 para);
+extern u8 xdata pwmval;
+extern u8 xdata pwmcnt;
 #endif
