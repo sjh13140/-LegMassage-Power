@@ -678,28 +678,48 @@ void key_process(void)
 						strengthflag=0;
 						mode=0;
 					}
-					runstate_temp = runstate;
-					t_data.len=0;
-					t_data.buf[t_data.len++]=runstate;
-					for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-					pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
+			runstate_temp = runstate;
+		      t_data.len=0;
+			t_data.buf[t_data.len++]= runstate;
+			t_data.buf[t_data.len++]= mode;
+			t_data.buf[t_data.len++]= modelove;
+			t_data.buf[t_data.len++]= alarmflag;
+			t_data.buf[t_data.len++]= strengthflag;
+			t_data.buf[t_data.len++]= footflag;	
+			t_data.buf[t_data.len++]= kneeflag;
+			for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
+			pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);	
 	}
 	else if(key==KEY3SHORT){ //开关
 		if(runstate==1){
 			runstate=2;
 			t_mode.temptime = get_stepsec();	
 			stoptime=getsystimes();
+		      t_data.len=0;
+			t_data.buf[t_data.len++]= runstate;
+			t_data.buf[t_data.len++]= mode;
+			t_data.buf[t_data.len++]= modelove;
+			t_data.buf[t_data.len++]= alarmflag;
+			t_data.buf[t_data.len++]= strengthflag;
+			t_data.buf[t_data.len++]= 0;	
+			t_data.buf[t_data.len++]= 0;
 			//stopflag=0;
 		}
 		else if(runstate==2){  //
 			runstate = 1;
 			set_stepsec(t_mode.temptime);
+		      t_data.len=0;
+		t_data.buf[t_data.len++]= runstate;
+		t_data.buf[t_data.len++]= mode;
+		t_data.buf[t_data.len++]= modelove;
+		t_data.buf[t_data.len++]= alarmflag;
+		t_data.buf[t_data.len++]= strengthflag;
+		t_data.buf[t_data.len++]= footflag;	
+		t_data.buf[t_data.len++]= kneeflag;
 		}
 		runstate_temp = runstate;
-		t_data.len=0;
-		t_data.buf[t_data.len++]=runstate;
 		for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
-		pushlongdata(SET_RUNSTATE,t_data.buf,t_data.len);
+		pushlongdata(GET_ALLSTATE,t_data.buf,t_data.len);	
 	}
 	else if(key==KEY4SHORT){   //强度 
 		strengthflag++;
