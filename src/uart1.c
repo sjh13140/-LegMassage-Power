@@ -44,6 +44,8 @@ void uart1_timer2_init()
 	RCP2H = (65536-24)/256;
 	TR2 = 1;          //timer2运行
 	REN = 1;		      //UART1接收收据使能
+//	IPH=(IPH&~0x40)|1<<4;
+//	IP=(IP&~0x40)|1<<4;
 	ES = 1;           //允许串口Uart1中断
 }
 

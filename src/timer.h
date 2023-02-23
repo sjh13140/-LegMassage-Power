@@ -1,6 +1,8 @@
 #ifndef __TIMER_H
 #define __TIMER_H
 #include "config.h"
+extern u8 xdata pwmval;
+extern u8 xdata pwmcnt;
 void tim0_mode1_init(void);   
 void tim1_mode1_init(void);   
 u32 getsystimes(void);
