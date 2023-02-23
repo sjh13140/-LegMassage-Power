@@ -844,21 +844,6 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_FOOTHOT){  //设置加热
 						             footflag = USART_RX_BUF[3];
-//								if(footflag==0) {
-//									footpara = 0;
-//								}
-//								else if(footflag==1){
-//									footpara = tempL1;
-
-//								}
-//								else if(footflag==2){
-//								footpara = tempL2;
-
-//								}
-//								else if(footflag==3){
-//								footpara = tempL3;
-
-//								}
                                           			t_data.len=0;
   								t_data.buf[t_data.len++]= footflag;
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
@@ -872,21 +857,6 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_KNEEHOT){  //设置加热
 						             kneeflag = USART_RX_BUF[3];
-//								if(kneeflag==0) {
-//									kneepara = 0;
-//								}
-//								else if(kneeflag==1){
-//									kneepara =tempL1;
-
-//								}
-//								else if(kneeflag==2){
-//								kneepara = tempL2;
-
-//								}
-//								else if(kneeflag==3){
-//								kneepara =tempL3;
-
-//								}
                                           			t_data.len=0;
   								t_data.buf[t_data.len++]= kneeflag;
   								for(i=0;i<buflen-t_data.len;i++)t_data.buf[t_data.len+i]=0;	
