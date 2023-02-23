@@ -1062,7 +1062,7 @@ void control_process(void)
 {
 u8 i;
 	if(runstate==0){   //关机
-		PUMP=0;                  //关闭气泵
+		pwmval=0;//PUMP=0;                  //关闭气泵
 		HEATLED=0;		//关闭加热指示灯
 		POWERLED=0;	//关闭运行指示灯
 		valve_process(0,0,0,0); //关闭全部气阀
