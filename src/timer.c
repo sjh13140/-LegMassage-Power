@@ -4,7 +4,7 @@
 #define FRC_HZ				14745600
 #define FRC_DIV				2
 #define CLK_US              2000                     //2000us
-#define CLK_US1     	  1
+#define CLK_US1     	  50
 #define TIME_RELOAD        (unsigned int)(65536-(((FRC_HZ/FRC_DIV)/2/1000)*CLK_US/1000))   //精度更高
 #define TIME_RELOAD1        (unsigned int)(65536-(((FRC_HZ/FRC_DIV)/2/1000)*CLK_US1/1000))   //精度更高
 
