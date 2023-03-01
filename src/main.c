@@ -925,8 +925,8 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==SET_LOVEMODE)  //添加心动模式
 						{
-                                                    	modelove=USART_RX_BUF[3]; 
-								eeprombuf[0]=1; 
+                                modelove=USART_RX_BUF[3]; 
+								eeprombuf[0]=eepromflag; 
 								eeprombuf[1]=modelove; 
 								iap_eeprom_write(0,eeprombuf,2); 
 								t_data.len=0;
@@ -944,8 +944,8 @@ void ble_process(void)
 						}
 						else if(USART_RX_BUF[1]==CLR_LOVEMODE)  //删除心动模式
 						{
-                                                      	modelove = 1;
-								eeprombuf[0]=1; 
+                                modelove = 1;
+								eeprombuf[0]=eepromflag;  
 								eeprombuf[1]=modelove; 
 								iap_eeprom_write(0,eeprombuf,2); 
 								t_data.len=0;
